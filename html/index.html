@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grimoire de Sorts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section id="hud" aria-label="HUD existant">
+        <img id="vlight-logo" src="images/logo/vlight_logo.png" alt="VLight Logo">
+        <div class="spells-bottom">
+            <div class="spell-row">
+                <div class="spell-diamond spell-small" id="spell-top"></div>
+            </div>
+            <div class="spell-row">
+                <div class="spell-diamond spell-small" id="spell-left"></div>
+                <div class="spell-diamond spell-center" id="spell-center"></div>
+                <div class="spell-diamond spell-small" id="spell-right"></div>
+            </div>
+            <div class="spell-row">
+                <div class="spell-diamond spell-small" id="spell-bottom"></div>
+            </div>
+            <div class="hud-spell-sets-dots" id="hud-spell-sets-dots">
+                <div class="hud-spell-set-dot active" data-set="1"></div>
+                <div class="hud-spell-set-dot" data-set="2"></div>
+                <div class="hud-spell-set-dot" data-set="3"></div>
+                <div class="hud-spell-set-dot" data-set="4"></div>
+                <div class="hud-spell-set-dot" data-set="5"></div>
+            </div>
+        </div>
+
+        <div class="bars">
+            <div class="bar-container">
+                <div class="bar bar-double">
+                    <div class="bar-half bar-blue">
+                        <div class="bar-fill" id="bar-blue-fill"></div>
+                    </div>
+                    <div class="bar-half bar-green">
+                        <div class="bar-fill" id="bar-green-fill"></div>
+                    </div>
+                </div>
+                <div class="bar-icon icon-hunger"><img src="images/hud/food.png" alt="Food"></div>
+            </div>
+            
+            <div class="bar-container">
+                <div class="bar bar-health bar-wide">
+                    <div class="bar-fill" id="bar-health-fill"></div>
+                    <div class="bar-text" id="bar-health-text"></div>
+                </div>
+                <div class="bar-icon icon-health"><img src="images/hud/health.png" alt="Health"></div>
+            </div>
+
+            <div class="bar-container">
+                <div class="bar bar-magic bar-wide">
+                    <div class="bar-fill" id="bar-magic-fill"></div>
+                </div>
+                <div class="bar-icon icon-magic"><img src="images/hud/magichp.png" alt="Magic"></div>
+            </div>
+
+            <div class="bar-container">
+                <div class="bar bar-potion">
+                    <div class="bar-fill" id="bar-potion-fill"></div>
+                </div>
+                <div class="bar-icon icon-potion"><img src="images/hud/potion.png" alt="Potion"></div>
+            </div>
+        </div>
+
+        <div id="magic-damage-overlay"></div>
+        <div id="magic-death-overlay"></div>
+        <div id="magic-death-text">VOUS ÊTES MORT RP !</div>
+    </section>
+
+    <section id="ann"></section>
+
+    <section id="spell-selector" aria-label="Sélecteur de sorts">
+        <div class="hl-filter-container">
+            <button class="hl-filter-toggle" id="filter-toggle">
+                <span class="hl-filter-icon">☰</span>
+                <span class="hl-filter-label">Filtres</span>
+            </button>
+            <div class="hl-filter-dropdown" id="filter-dropdown">
+                <button class="hl-filter-btn active" data-filter="all">Tous</button>
+                <button class="hl-filter-btn" data-filter="yellow">
+                    <span class="hl-filter-dot yellow"></span>Utilitaire
+                </button>
+                <button class="hl-filter-btn" data-filter="red">
+                    <span class="hl-filter-dot red"></span>Offensif
+                </button>
+                <button class="hl-filter-btn" data-filter="purple">
+                    <span class="hl-filter-dot purple"></span>Contrôle
+                </button>
+                <button class="hl-filter-btn" data-filter="green">
+                    <span class="hl-filter-dot green"></span>Soin
+                </button>
+            </div>
+        </div>
+        <div class="hl-selector-container">
+            <div class="hl-slots-container">
+                <div class="hl-slots-grid">
+                    <div class="hl-slot-row">
+                        <div class="hl-slot-diamond" data-position="top" id="hl-slot-top"></div>
+                    </div>
+                    <div class="hl-slot-row">
+                        <div class="hl-slot-diamond" data-position="left" id="hl-slot-left"></div>
+                        <div class="hl-slot-diamond hl-slot-center" data-position="center" id="hl-slot-center"></div>
+                        <div class="hl-slot-diamond" data-position="right" id="hl-slot-right"></div>
+                    </div>
+                    <div class="hl-slot-row">
+                        <div class="hl-slot-diamond" data-position="bottom" id="hl-slot-bottom"></div>
+                    </div>
+                </div>
+                <div class="hl-spell-sets-dots" id="spell-sets-dots">
+                    <div class="hl-spell-set-dot active" data-set="1"></div>
+                    <div class="hl-spell-set-dot" data-set="2"></div>
+                    <div class="hl-spell-set-dot" data-set="3"></div>
+                    <div class="hl-spell-set-dot" data-set="4"></div>
+                    <div class="hl-spell-set-dot" data-set="5"></div>
+                </div>
+            </div>
+            <div class="hl-grid-container">
+                <div class="hl-search-wrapper">
+                    <input type="text" id="spell-search-input" placeholder="Rechercher un sort..." class="hl-search-input">
+                </div>
+                <div id="spell-grid" class="hl-spell-grid"></div>
+            </div>
+            <div class="hl-preview-container">
+                <div class="hl-preview-media">
+                    <video id="preview-video" class="hl-preview-video" muted loop></video>
+                    <img id="preview-image" class="hl-preview-image" alt="Aperçu du sort">
+                    <div class="hl-preview-placeholder">Survolez un sort</div>
+                </div>
+                <div class="hl-preview-text">
+                    <h2 id="preview-title" class="hl-preview-title"></h2>
+                    <p id="preview-description" class="hl-preview-description"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="professor-menu" aria-label="Menu Professeur">
+        <div id="professor-notifications" class="professor-notifications"></div>
+        <div class="professor-surface">
+            <header class="professor-header">
+                <div>
+                    <p class="professor-kicker">Magisterium</p>
+                    <h1 class="professor-title">Grimoire du Professeur</h1>
+                </div>
+                <div class="professor-header-actions">
+                    <button class="professor-icon-btn" id="professor-close-btn" aria-label="Fermer">✕</button>
+                </div>
+            </header>
+
+            <div class="professor-tabs">
+                <button class="professor-tab active" data-tab="course">Cours</button>
+                <button class="professor-tab" data-tab="spells">Sorts</button>
+                <button class="professor-tab" data-tab="points">Points</button>
+            </div>
+
+            <div class="professor-panels">
+                <div class="professor-panel active" id="tab-course">
+                    <div class="panel-grid two">
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="panel-kicker">Zone d'étude</p>
+                                    <h2>Participants proches</h2>
+                                </div>
+                                <div class="panel-actions">
+                                    <button class="pill-btn" id="include-professor-btn" data-tooltip="Inclure le professeur dans la liste des sorts temporaires">M'inclure</button>
+                                    <button class="pill-btn primary" id="refresh-nearby-btn" data-tooltip="Actualiser la liste des élèves à proximité (10m)">Actualiser</button>
+                                </div>
+                            </div>
+                            <div class="accordion-list small-scroll" id="nearby-students-list">
+                                <div class="empty-state">Aucun élève à proximité (10m)</div>
+                            </div>
+                        </article>
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="panel-kicker">Sorts éphémères</p>
+                                    <h2>Sorts temporaires</h2>
+                                </div>
+                                <div class="panel-actions">
+                                    <button class="pill-btn danger" id="remove-all-temp-btn" data-tooltip="Retirer tous les sorts temporaires de tous les élèves">Retirer tous</button>
+                                </div>
+                            </div>
+                            <p class="helper-text" style="margin-bottom: 16px;">⚠️ Les sorts attribués ici sont <strong>temporaires</strong> et ne sont pas inscrits dans le grimoire. Ils sont uniquement pour la durée du cours.</p>
+                            <div class="accordion-list small-scroll" id="temp-spells-list">
+                                <div class="empty-state">Aucun sort temporaire attribué</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="professor-panel" id="tab-spells">
+                    <div class="panel-grid two">
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="panel-kicker" id="spells-kicker">Bibliothèque</p>
+                                    <h2 id="spells-title">Sorts disponibles (définitifs)</h2>
+                                </div>
+                            </div>
+                            <input type="text" class="professor-input" id="spell-search" placeholder="Rechercher un sort, une catégorie..." style="margin-bottom: 16px; width: 100%;">
+                            <p class="helper-text" id="spells-helper" style="margin-bottom: 16px; padding: 12px; background: var(--blue); border: 1px solid var(--blue-light); border-radius: 6px;">📚 <strong>Bibliothèque des sorts</strong><br>Cette section liste tous les sorts disponibles sur le serveur. Utilisez l'onglet "Cours" pour attribuer des sorts temporaires aux élèves proches.</p>
+                            <div class="accordion-list small-scroll" id="all-spells-grid">
+                                <div class="empty-state">Chargement des sorts...</div>
+                            </div>
+                        </article>
+
+                        <article class="panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="panel-kicker">Apprenants</p>
+                                    <h2>Joueurs</h2>
+                                </div>
+                                <input type="text" class="professor-input" id="player-search" placeholder="Rechercher un joueur...">
+                            </div>
+                            <div class="accordion-list" id="players-list">
+                                <div class="empty-state">Chargement des joueurs...</div>
+                            </div>
+                            <div class="player-details-panel" id="player-details-section" data-visible="false">
+                                <div class="player-details-header">
+                                    <div class="player-details-title">
+                                        <span class="player-details-kicker">Gestion du joueur</span>
+                                        <h2 id="selected-player-name">Joueur sélectionné</h2>
+                                    </div>
+                                    <button class="player-details-close" id="close-player-details">✕</button>
+                                </div>
+
+                                <div class="player-details-actions">
+                                    <button class="action-btn primary" id="add-spell-permanent-btn">+ Attribuer</button>
+                                    <button class="action-btn primary" id="give-skillpoint-btn">Points compétence</button>
+                                    <button class="action-btn danger" id="remove-skillpoint-btn">Retirer points</button>
+                                    <!-- <button class="action-btn" id="add-all-permanent-btn">Tout ajouter</button>
+                                    <button class="action-btn danger" id="remove-all-permanent-btn">Tout retirer</button> -->
+                                    <button class="action-btn" id="set-max-level-btn">Lvl Max</button>
+                                    <button class="action-btn" id="reset-cooldown-btn">Reset CD</button>
+                                </div>
+
+                                <div class="player-details-level">
+                                    <span class="level-label">Niveau global :</span>
+                                    <input type="number" min="0" max="5" value="0" id="global-level-input" class="level-input">
+                                    <button class="action-btn primary" id="apply-global-levels-btn">Appliquer</button>
+                                </div>
+                                <div class="player-skillpoints" id="player-skillpoints">Points compétence : --</div>
+
+                                <div class="player-details-info">
+                                    ✓ Les sorts attribués ici sont <strong>permanents</strong> et inscrits dans le grimoire.
+                                </div>
+
+                                <div class="player-details-spells">
+                                    <div class="spells-list-header" style="display: flex; align-items: center; gap: 8px;">
+                                        <span>Sorts possédés</span>
+                                        <input type="text" class="professor-input" id="player-spell-search" placeholder="Rechercher un sort..." style="max-width: 280px; margin-left: auto;">
+                                    </div>
+                                    <div class="accordion-list small-scroll" id="player-spells-list">
+                                        <div class="empty-state">Aucun sort possédé</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="professor-panel" id="tab-points">
+                    <div class="panel-grid two">
+                        <article class="panel" id="points-bulk-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <p class="panel-kicker">Compétences</p>
+                                    <h2>Donner des points</h2>
+                                </div>
+                                <div class="panel-actions">
+                                    <button class="pill-btn" id="bulk-refresh-btn" data-tooltip="Actualiser les élèves proches (10m)">Actualiser</button>
+                                </div>
+                            </div>
+                            <p class="helper-text" style="margin-bottom: 12px;">Sélectionne les élèves devant toi (10m) et attribue un nombre de points de compétence en une fois.</p>
+                            <div class="points-bulk-controls">
+                                <input type="number" min="1" max="50" value="1" id="bulk-points-amount" class="professor-input" style="width: 120px;">
+                                <button class="pill-btn primary" id="bulk-give-btn">Attribuer aux sélectionnés</button>
+                                <span class="muted" id="bulk-selected-count">0 sélectionné(s)</span>
+                            </div>
+                            <div class="accordion-list small-scroll" id="bulk-points-list">
+                                <div class="empty-state">Aucun élève à proximité (10m)</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="modal-layer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

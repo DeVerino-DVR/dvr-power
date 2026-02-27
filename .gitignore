@@ -1,0 +1,23 @@
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Config local
+config/local_*.lua
+
+# Backup
+*.bak
+*.backup
+
+# Test files
+test_*.lua
+debug_*.lua
+
