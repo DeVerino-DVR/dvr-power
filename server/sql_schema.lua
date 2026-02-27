@@ -7,7 +7,7 @@ local function checkTable(tableName, createSql, nextStep)
         end
 
         MySQL.query(createSql, {}, function()
-            print(("[th_power] ✓ Table %s créée"):format(tableName))
+            print(("[dvr_power] ✓ Table %s créée"):format(tableName))
             if nextStep then nextStep() end
         end)
     end)
@@ -27,7 +27,7 @@ local function checkColumn(tableName, columnName, alterSql, nextStep)
         end
 
         MySQL.query(alterSql, {}, function()
-            print(("[th_power] ✓ Colonne %s.%s ajoutée"):format(tableName, columnName))
+            print(("[dvr_power] ✓ Colonne %s.%s ajoutée"):format(tableName, columnName))
             if nextStep then nextStep() end
         end)
     end)
@@ -100,7 +100,7 @@ local function runSchemaChecks()
     ensureCharacterMagicHp(function()
     ensureCharacterSpells(function()
     ensureProfessorData(function()
-        print('[th_power] ✓ Schéma base vérifié')
+        print('[dvr_power] ✓ Schéma base vérifié')
     end) end) end)
 end
 

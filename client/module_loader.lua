@@ -30,4 +30,4 @@ local function LoadModule(moduleName)
     loadedModules[moduleName] = true
 end
 
-_ENV.th_power_loadModule = LoadModule
+_ENV.dvr_power_loadModule = LoadModule

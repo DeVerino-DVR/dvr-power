@@ -43,8 +43,8 @@ local SetPedToRagdoll = SetPedToRagdoll
 local IsPedFatallyInjured = IsPedFatallyInjured
 local IsPedRagdoll = IsPedRagdoll
 local string_lower = string.lower
-local math_min = math.min
-local math_max = math.max
+local madvr_min = math.min
+local madvr_max = math.max
 
 local soundCooldownActive = false
 local isCasting = false
@@ -396,7 +396,7 @@ local function RequestModuleSync(force)
     end
 
     lastModuleSync = now
-    TriggerServerEvent('th_power:requestModuleSync')
+    TriggerServerEvent('dvr_power:requestModuleSync')
 end
 
 AddEventHandler('playerSpawned', function()
@@ -414,7 +414,7 @@ AddEventHandler('onClientResourceStart', function(resourceName)
     end)
 end)
 
-RegisterNetEvent('th_power:refreshModules', function()
+RegisterNetEvent('dvr_power:refreshModules', function()
     RequestModuleSync(true)
 end)
 
@@ -499,7 +499,7 @@ local function DeselectActiveSpell()
 
     selectedSpellId = nil
     lastSpellInteractionAt = 0
-    DeleteResourceKvp('th_power:last_active_spell')
+    DeleteResourceKvp('dvr_power:last_active_spell')
 
     if HUD then
         HUD.lastSelectedSpellId = nil
@@ -601,14 +601,14 @@ SaveCooldownsToCache = function()
     
     if next(activeCooldowns) then
         local cooldownsJson = json.encode(activeCooldowns)
-        SetResourceKvp('th_power:active_cooldowns', cooldownsJson)
+        SetResourceKvp('dvr_power:active_cooldowns', cooldownsJson)
     else
-        DeleteResourceKvp('th_power:active_cooldowns')
+        DeleteResourceKvp('dvr_power:active_cooldowns')
     end
 end
 
 local function LoadCooldownsFromCache()
-    local cooldownsJson = GetResourceKvpString('th_power:active_cooldowns')
+    local cooldownsJson = GetResourceKvpString('dvr_power:active_cooldowns')
     if cooldownsJson and cooldownsJson ~= '' then
         local success, activeCooldowns = pcall(json.decode, cooldownsJson)
         if success and activeCooldowns then
@@ -734,7 +734,7 @@ local function PlayLeftClickSound()
     local startAt = GetGameTimer()
 
     SetTimeout(300, function()
-        local soundId = ('th_power_left_click_%s_%d'):format(cache and cache.serverId or 'local', startAt)
+        local soundId = ('dvr_power_left_click_%s_%d'):format(cache and cache.serverId or 'local', startAt)
         -- REPLACE WITH YOUR SOUND SYSTEM
         -- pcall(function()
         --     local handle = exports['lo_audio']:playSound({
@@ -757,13 +757,13 @@ end
 
 SaveSpellKeyAssignments = function()
     if selectedSpellId then
-        SetResourceKvp('th_power:last_active_spell', selectedSpellId)
+        SetResourceKvp('dvr_power:last_active_spell', selectedSpellId)
     else
-        DeleteResourceKvp('th_power:last_active_spell')
+        DeleteResourceKvp('dvr_power:last_active_spell')
     end
 
     local assignmentsJson = json.encode(spellKeyAssignments)
-    SetResourceKvp('th_power:spell_key_assignments', assignmentsJson)
+    SetResourceKvp('dvr_power:spell_key_assignments', assignmentsJson)
 
     local currentAssignmentsCopy = {}
     for k, v in pairs(spellKeyAssignments) do
@@ -774,12 +774,12 @@ SaveSpellKeyAssignments = function()
         selectedSpell = selectedSpellId
     }
     local setsJson = json.encode(spellSets)
-    SetResourceKvp('th_power:spell_sets', setsJson)
-    SetResourceKvp('th_power:current_spell_set', tostring(currentSpellSetId))
+    SetResourceKvp('dvr_power:spell_sets', setsJson)
+    SetResourceKvp('dvr_power:current_spell_set', tostring(currentSpellSetId))
 end
 
 local function LoadSpellSetsFromCache()
-    local setsJson = GetResourceKvpString('th_power:spell_sets')
+    local setsJson = GetResourceKvpString('dvr_power:spell_sets')
     print('[SpellSets] Loading from cache...')
     print('[SpellSets] Raw JSON: ' .. tostring(setsJson))
 
@@ -843,7 +843,7 @@ local function LoadSpellSetsFromCache()
                 end
 
                 local newSetsJson = json.encode(spellSets)
-                SetResourceKvp('th_power:spell_sets', newSetsJson)
+                SetResourceKvp('dvr_power:spell_sets', newSetsJson)
                 print('[SpellSets] Migration complete, saved new format')
             end
         end
@@ -851,7 +851,7 @@ local function LoadSpellSetsFromCache()
         print('[SpellSets] No saved sets found')
     end
 
-    local currentSetStr = GetResourceKvpString('th_power:current_spell_set')
+    local currentSetStr = GetResourceKvpString('dvr_power:current_spell_set')
     print('[SpellSets] Current set from KVP: ' .. tostring(currentSetStr))
     if currentSetStr and currentSetStr ~= '' then
         local setId = tonumber(currentSetStr)
@@ -887,7 +887,7 @@ local function SwitchSpellSet(setId)
     }
 
     local setsJson = json.encode(spellSets)
-    SetResourceKvp('th_power:spell_sets', setsJson)
+    SetResourceKvp('dvr_power:spell_sets', setsJson)
 
     currentSpellSetId = setId
 
@@ -976,7 +976,7 @@ local function RenameSpellSet(setId, newName)
     spellSets[setId].name = newName
 
     local setsJson = json.encode(spellSets)
-    SetResourceKvp('th_power:spell_sets', setsJson)
+    SetResourceKvp('dvr_power:spell_sets', setsJson)
 
     return true
 end
@@ -994,7 +994,7 @@ local function BuildHudSpellPayload(spellId, position, spellDefinition, override
         return nil
     end
 
-    local icon = spellDefinition.image or spellDefinition.icon or 'images/power/th_basic.png'
+    local icon = spellDefinition.image or spellDefinition.icon or 'images/power/dvr_basic.png'
     local element = GetSpellElement(spellDefinition.type)
     local key = POSITION_TO_KEY[position] or ''
     local displayName = overrideName or spellDefinition.name or spellId
@@ -1097,7 +1097,7 @@ LoadSpellKeyAssignmentsFromCache = function()
         end
     else
         print('[SpellSets] No set assignments, falling back to legacy KVP')
-        local assignmentsJson = GetResourceKvpString('th_power:spell_key_assignments')
+        local assignmentsJson = GetResourceKvpString('dvr_power:spell_key_assignments')
         if assignmentsJson and assignmentsJson ~= '' then
             local success, cachedAssignments = pcall(json.decode, assignmentsJson)
             if success and cachedAssignments then
@@ -1111,7 +1111,7 @@ LoadSpellKeyAssignmentsFromCache = function()
             end
         end
 
-        local activeSpellJson = GetResourceKvpString('th_power:last_active_spell')
+        local activeSpellJson = GetResourceKvpString('dvr_power:last_active_spell')
         if activeSpellJson and activeSpellJson ~= '' then
             selectedSpellId = activeSpellJson
         end
@@ -1318,7 +1318,7 @@ local function AssignSpellToKey(spellId, keyIndex)
     if shouldUpdateSelected then
         selectedSpellId = spellId
         lastSpellInteractionAt = GetGameTimer()
-        SetResourceKvp('th_power:last_active_spell', selectedSpellId)
+        SetResourceKvp('dvr_power:last_active_spell', selectedSpellId)
 
         SendNUIMessage({
             action = 'setSelectedSpell',
@@ -1359,7 +1359,7 @@ local function AssignSpellToKey(spellId, keyIndex)
     return true
 end
 
-RegisterNetEvent('th_power:loadSpells', function(spellList, levels) 
+RegisterNetEvent('dvr_power:loadSpells', function(spellList, levels) 
     playerSpells = spellList or {}
     playerSpellLevels = {}
     if levels then
@@ -1387,7 +1387,7 @@ RegisterNetEvent('th_power:loadSpells', function(spellList, levels)
     end
 end)
 
-RegisterNetEvent('th_power:loadSpellKeys', function(assignments)
+RegisterNetEvent('dvr_power:loadSpellKeys', function(assignments)
     Wait(500)
     LoadSpellKeyAssignmentsFromCache()
     
@@ -1410,7 +1410,7 @@ RegisterNetEvent('th_power:loadSpellKeys', function(assignments)
     end
 end)
 
-RegisterNetEvent('th_power:removeSpellFromHUD', function(spellId, position)
+RegisterNetEvent('dvr_power:removeSpellFromHUD', function(spellId, position)
     if not spellId then return end
     
     if not position then
@@ -1444,7 +1444,7 @@ RegisterNetEvent('th_power:removeSpellFromHUD', function(spellId, position)
     SaveSpellKeyAssignments()
 end)
 
-RegisterNetEvent('th_power:unregisterModule', function(moduleName)
+RegisterNetEvent('dvr_power:unregisterModule', function(moduleName)
     local moduleData = externalModules[moduleName]
     if not moduleData then
         return
@@ -1502,7 +1502,7 @@ RegisterNetEvent('th_power:unregisterModule', function(moduleName)
     end
 end)
 
-RegisterNetEvent('th_power:registerModule', function(moduleData)
+RegisterNetEvent('dvr_power:registerModule', function(moduleData)
     if externalModules[moduleData.name] then
         return
     end
@@ -1554,7 +1554,7 @@ RegisterNetEvent('th_power:registerModule', function(moduleData)
                     defaultKey = spell.keys,
                     onPressed = function()
                         if not isCasting and not (HUD and HUD.needsLocked) then
-                            TriggerEvent('th_power:castSpellByKey', spell.id)
+                            TriggerEvent('dvr_power:castSpellByKey', spell.id)
                         elseif HUD and HUD.needsLocked then
                             PlayEchecSound(spell.id)
                         end
@@ -1647,10 +1647,10 @@ local function NormalizeTrailComponent(value)
     end
 
     if value > 1.0 then
-        return math_min(1.0, value / 255.0)
+        return madvr_min(1.0, value / 255.0)
     end
 
-    return math_max(value, 0.0)
+    return madvr_max(value, 0.0)
 end
 
 local function ResolveTrailColor(jobName)
@@ -1698,7 +1698,7 @@ local function RefreshWandTrailColor(force, overrideJobName)
 
     lastTrailJobName = jobName or lastTrailJobName
     ApplyWandTrailColor(jobName)
-    print(('[th_power] wand trail job=%s color=%.2f %.2f %.2f'):format(
+    print(('[dvr_power] wand trail job=%s color=%.2f %.2f %.2f'):format(
         tostring(jobName or 'nil'),
         WAND_TRAIL_COLOR.r,
         WAND_TRAIL_COLOR.g,
@@ -2008,7 +2008,7 @@ local function CastSpell(spellId)
     selectedSpellId = spellId
     lastSpellInteractionAt = now
     
-    SetResourceKvp('th_power:last_active_spell', selectedSpellId)
+    SetResourceKvp('dvr_power:last_active_spell', selectedSpellId)
 
     local position = spellKeyAssignments[spellId]
     
@@ -2042,10 +2042,10 @@ local function CastSpell(spellId)
     end
     
     if spell.sound and spell.sound ~= '' and not muteSound then
-        TriggerServerEvent('th_power:playSpellSound', spellId, coords)
+        TriggerServerEvent('dvr_power:playSpellSound', spellId, coords)
     end
 
-    TriggerServerEvent('th_power:castSpell', spellId, coords, targetServerId)
+    TriggerServerEvent('dvr_power:castSpell', spellId, coords, targetServerId)
     if not cooldownEnabled then
         local castDuration = spell.castTime or (spell.animation and spell.animation.duration) or 800
         if castDuration < 400 then
@@ -2211,7 +2211,7 @@ RegisterCommand('spellmenu', function()
     end
 end, false)
 
-RegisterNetEvent('th_power:assignSpellToKey', function(spellId, keyIndex)
+RegisterNetEvent('dvr_power:assignSpellToKey', function(spellId, keyIndex)
     AssignSpellToKey(spellId, keyIndex)
 end)
 
@@ -2297,7 +2297,7 @@ local function CycleSelectedSpell(step)
 
     selectedSpellId = target.id
     lastSpellInteractionAt = GetGameTimer()
-    SetResourceKvp('th_power:last_active_spell', selectedSpellId)
+    SetResourceKvp('dvr_power:last_active_spell', selectedSpellId)
 
     SendNUIMessage({
         action = 'setSelectedSpell',
@@ -2340,7 +2340,7 @@ local function HandleHudSlotPress(position)
     else
         selectedSpellId = assignedSpellId
         lastSpellInteractionAt = GetGameTimer()
-        SetResourceKvp('th_power:last_active_spell', selectedSpellId)
+        SetResourceKvp('dvr_power:last_active_spell', selectedSpellId)
         SendNUIMessage({
             action = 'setSelectedSpell',
             position = position,
@@ -2385,7 +2385,7 @@ CreateThread(function()
 
             if IsDisabledControlJustPressed(0, 24) and canUseSelected then
                 if selectedSpellId == 'transvalis' and LocalPlayer and LocalPlayer.state and LocalPlayer.state.transvalisActive then
-                    TriggerEvent('th_transvalis:cancelRequested')
+                    TriggerEvent('dvr_transvalis:cancelRequested')
                 elseif HUD and HUD.needsLocked then
                     PlayEchecSound(selectedSpellId)
                 elseif not IsControlPressed(0, INPUT_PUSH_TO_TALK) then
@@ -2419,7 +2419,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('th_power:spellCast', function(sourceId, spellId, targetCoords, level)
+RegisterNetEvent('dvr_power:spellCast', function(sourceId, spellId, targetCoords, level)
     local spell = GetSpellDefinition(spellId)
     if not spell then return end
     local myServerId = GetPlayerServerId(PlayerId())
@@ -2538,7 +2538,7 @@ RegisterNetEvent('th_power:spellCast', function(sourceId, spellId, targetCoords,
     end
 end)
 
-RegisterNetEvent('th_power:resetAllCooldowns', function()
+RegisterNetEvent('dvr_power:resetAllCooldowns', function()
     spellCooldowns = {}
     
     if HUD and HUD.activeCooldowns then
@@ -2549,7 +2549,7 @@ RegisterNetEvent('th_power:resetAllCooldowns', function()
         action = 'clearAllCooldowns'
     })
     
-    DeleteResourceKvp('th_power:active_cooldowns')
+    DeleteResourceKvp('dvr_power:active_cooldowns')
     
     lib.notify({
         title = 'Cooldowns réinitialisés',
@@ -2559,7 +2559,7 @@ RegisterNetEvent('th_power:resetAllCooldowns', function()
     })
 end)
 
-RegisterNetEvent('th_power:unlockSpell', function(spellId, level)
+RegisterNetEvent('dvr_power:unlockSpell', function(spellId, level)
     local spell = GetSpellDefinition(spellId)
     if not spell then
         return
@@ -2583,11 +2583,11 @@ exports('registerModule', function(moduleData)
     end
 
     if externalModules[moduleName] then
-        TriggerEvent('th_power:unregisterModule', moduleName)
+        TriggerEvent('dvr_power:unregisterModule', moduleName)
     end
 
     moduleData.__origin = 'client'
-    TriggerEvent('th_power:registerModule', moduleData)
+    TriggerEvent('dvr_power:registerModule', moduleData)
     return externalModules[moduleName] ~= nil
 end)
 
@@ -2596,7 +2596,7 @@ exports('unregisterModule', function(moduleName)
         return false
     end
 
-    TriggerEvent('th_power:unregisterModule', moduleName)
+    TriggerEvent('dvr_power:unregisterModule', moduleName)
     return externalModules[moduleName] == nil
 end)
 
@@ -2614,7 +2614,7 @@ AddEventHandler('onResourceStop', function(resourceName)
     spellCooldowns = {}
     
     for lightId, _ in pairs(activeLights) do
-        TriggerEvent('th_power:removeLight', lightId)
+        TriggerEvent('dvr_power:removeLight', lightId)
     end
     activeLights = {}
     
@@ -2739,7 +2739,7 @@ exports('getCurrentSpellSetId', function()
     return currentSpellSetId
 end)
 
-RegisterNetEvent('th_power:spellRemoved', function(spellId, spellName)
+RegisterNetEvent('dvr_power:spellRemoved', function(spellId, spellName)
     local position = GetHudPositionForSpell(spellId)
 
     if position then
@@ -2755,7 +2755,7 @@ RegisterNetEvent('th_power:spellRemoved', function(spellId, spellName)
     if selectedSpellId == spellId then
         selectedSpellId = nil
         lastSpellInteractionAt = 0
-        DeleteResourceKvp('th_power:last_active_spell')
+        DeleteResourceKvp('dvr_power:last_active_spell')
     end
     
     if spellCooldowns[spellId] then
@@ -2840,7 +2840,7 @@ local function PlayFxOnPed(ped, fxConfig)
     end
 end
 
-RegisterNetEvent('th_power:spellTrainingEffect', function(casterId, spellId, level)
+RegisterNetEvent('dvr_power:spellTrainingEffect', function(casterId, spellId, level)
     local ped = ResolvePedFromServerId(casterId)
     if not ped then
         return
@@ -2859,7 +2859,7 @@ RegisterNetEvent('th_power:spellTrainingEffect', function(casterId, spellId, lev
     end
 end)
 
-RegisterNetEvent('th_power:spellBackfire', function(casterId, spellId, level)
+RegisterNetEvent('dvr_power:spellBackfire', function(casterId, spellId, level)
     local ped = ResolvePedFromServerId(casterId)
     if not ped then
         return
@@ -2879,7 +2879,7 @@ RegisterNetEvent('th_power:spellBackfire', function(casterId, spellId, level)
     end
 end)
 
-RegisterNetEvent('th_power:updateSpellLevel', function(spellId, level)
+RegisterNetEvent('dvr_power:updateSpellLevel', function(spellId, level)
     if not spellId then
         return
     end
@@ -2894,7 +2894,7 @@ RegisterNetEvent('th_power:updateSpellLevel', function(spellId, level)
     end
 end)
 
-RegisterNetEvent('th_power:hideHUD', function()
+RegisterNetEvent('dvr_power:hideHUD', function()
     SaveCooldownsToCache()
     
     if HUD and HUD.Destroy then
@@ -2959,7 +2959,7 @@ end)
 -- end)
 
 -- REPLACE WITH YOUR SOUND SYSTEM (spell sound event handler)
-RegisterNetEvent('th_power:playSpellSound', function(soundId, soundUrl, coords, spellId)
+RegisterNetEvent('dvr_power:playSpellSound', function(soundId, soundUrl, coords, spellId)
     if not soundId or not soundUrl or not coords then return end
 
     local is2D = false

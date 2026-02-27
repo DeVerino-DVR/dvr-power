@@ -132,13 +132,13 @@ function HPSystem.DealDamage(source, damage, attackerId, spellId)
         return false
     end
 
-    if exports['th_prothea']:hasGodmode(source) then
+    if exports['dvr_prothea']:hasGodmode(source) then
         return false
     end
 
     local reduction = 0
     local ok, shieldReduction = pcall(function()
-        return exports['th_prothea']:getShieldReduction(source)
+        return exports['dvr_prothea']:getShieldReduction(source)
     end)
     if ok and shieldReduction and shieldReduction > 0 then
         reduction = shieldReduction
@@ -168,7 +168,7 @@ function HPSystem.DealDamage(source, damage, attackerId, spellId)
     end
     
     HPSystem.SaveHP(player.identifier, hp.current, hp.isDead, hp.lastDamageTime)
-    TriggerClientEvent('th_power:updateHP', source, hp.current, hp.max, attackerId, spellId)
+    TriggerClientEvent('dvr_power:updateHP', source, hp.current, hp.max, attackerId, spellId)
     
     return true
 end
@@ -190,7 +190,7 @@ function HPSystem.Heal(source, amount)
     
     
     HPSystem.SaveHP(player.identifier, hp.current, hp.isDead, hp.lastDamageTime)
-    TriggerClientEvent('th_power:updateHP', source, hp.current, hp.max)
+    TriggerClientEvent('dvr_power:updateHP', source, hp.current, hp.max)
     
     return true, actualHeal
 end
@@ -244,7 +244,7 @@ RegisterNetEvent('esx:onPlayerDeath', function(data)
         hp.lastDamageTime = os.time()
         HPSystem.SaveHP(player.identifier, hp.current, hp.isDead, hp.lastDamageTime)
         
-        TriggerClientEvent('th_power:updateHP', _source, hp.current, hp.max, deathType, deathType, removeHp)
+        TriggerClientEvent('dvr_power:updateHP', _source, hp.current, hp.max, deathType, deathType, removeHp)
     end
 
     LogDiscord.LogDeath({
@@ -261,7 +261,7 @@ RegisterNetEvent('esx:onPlayerDeath', function(data)
 end)
 
 function HPSystem.HandleDeath(source, identifier)
-    TriggerClientEvent('th_power:playerDied', source)
+    TriggerClientEvent('dvr_power:playerDied', source)
     
     if HP_CONFIG.DEATH_RESPAWN_TIME and HP_CONFIG.DEATH_RESPAWN_TIME > 0 then
         SetTimeout(HP_CONFIG.DEATH_RESPAWN_TIME, function()
@@ -288,7 +288,7 @@ function HPSystem.Respawn(source, identifier)
         hp.lastDamageTime = nil
         
         HPSystem.SaveHP(playerIdentifier, hp.current, hp.isDead, nil)
-        TriggerClientEvent('th_power:respawn', source, hp.current, hp.max)
+        TriggerClientEvent('dvr_power:respawn', source, hp.current, hp.max)
     end
 end
 
@@ -305,7 +305,7 @@ function HPSystem.SetMaxHP(source, maxHP)
     MySQL.update.await('UPDATE character_magic_hp SET max_hp = ?, current_hp = ? WHERE identifier = ?', 
         {maxHP, hp.current, player.identifier})
     
-    TriggerClientEvent('th_power:updateHP', source, hp.current, hp.max)
+    TriggerClientEvent('dvr_power:updateHP', source, hp.current, hp.max)
     
     return true
 end
@@ -339,7 +339,7 @@ AddEventHandler('esx:playerLoaded', function(source, xplayer)
     if not xplayer or not xplayer.identifier then return end
     
     playerHP[xplayer.identifier] = HPSystem.LoadHP(xplayer.identifier) or {}
-    TriggerClientEvent('th_power:updateHP', source, playerHP[xplayer.identifier].current, playerHP[xplayer.identifier].max)
+    TriggerClientEvent('dvr_power:updateHP', source, playerHP[xplayer.identifier].current, playerHP[xplayer.identifier].max)
 end)
 
 AddEventHandler('esx:playerLogout', function(source)
@@ -367,7 +367,7 @@ lib.addCommand('sethp', {
         hp.isDead = hp.current <= 0
         
         HPSystem.SaveHP(ESX.GetPlayerFromId(args.target).identifier, hp.current, hp.isDead, hp.lastDamageTime)
-        TriggerClientEvent('th_power:updateHP', args.target, hp.current, hp.max)
+        TriggerClientEvent('dvr_power:updateHP', args.target, hp.current, hp.max)
         
         lib.notify(source, {
             title = 'HP System',
@@ -394,7 +394,7 @@ lib.addCommand('setmaxhp', {
     end
 end)
 
-RegisterNetEvent('th_power:client:dealDamage', function(damage, attackerId, spellId)
+RegisterNetEvent('dvr_power:client:dealDamage', function(damage, attackerId, spellId)
     local _source <const> = source
     HPSystem.DealDamage(_source, damage or 1, attackerId, spellId)
 end)

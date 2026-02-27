@@ -6,7 +6,7 @@ local isSending = false
 local MAX_LEVEL <const> = (Config.Leveling and Config.Leveling.max_level) or 5
 
 if (not Config.Logs.webhook or Config.Logs.webhook == '') then
-    local convarWebhook = GetConvar('th_power_logs_webhook', '')
+    local convarWebhook = GetConvar('dvr_power_logs_webhook', '')
     if convarWebhook and convarWebhook ~= '' then
         Config.Logs.webhook = convarWebhook
     end
@@ -146,7 +146,7 @@ local function processQueue()
 
     if not entry or not entry.embed then
         if Config.Logs.debug then
-            print('[th_power] LogDiscord: entrée invalide, log ignoré')
+            print('[dvr_power] LogDiscord: entrée invalide, log ignoré')
         end
         isSending = false
         if #logQueue > 0 then
@@ -158,7 +158,7 @@ local function processQueue()
     local webhook <const> = resolveWebhook(entry.webhook)
     if not webhook or webhook == '' then
         if Config.Logs.debug then
-            print('[th_power] LogDiscord: webhook absent, log ignoré')
+            print('[dvr_power] LogDiscord: webhook absent, log ignoré')
         end
         isSending = false
         if #logQueue > 0 then
@@ -182,12 +182,12 @@ local function processQueue()
 
     local jsonPayload <const> = json.encode(payload)
     if Config.Logs.debug then
-        print('[th_power] LogDiscord payload:', jsonPayload)
+        print('[dvr_power] LogDiscord payload:', jsonPayload)
     end
 
     PerformHttpRequest(webhook, function(status, body, headers)
         if Config.Logs.debug then
-            print('[th_power] Discord response:', status, body or 'nil')
+            print('[dvr_power] Discord response:', status, body or 'nil')
         end
         isSending = false
         if #logQueue > 0 then
@@ -299,7 +299,7 @@ local function sendLog(actionType, data)
 end
 
 local function LogDeath(data)
-    if not Config or not Config.Logs or not Config.Logs.death_webhook or Config.Logs.death_webhook == '' then
+    if not Config or not Config.Logs or not Config.Logs.deadvr_webhook or Config.Logs.deadvr_webhook == '' then
         return
     end
 
@@ -375,7 +375,7 @@ local function LogDeath(data)
 
     enqueueLog({
         embed = embed,
-        webhook = Config.Logs.death_webhook
+        webhook = Config.Logs.deadvr_webhook
     })
 end
 

@@ -109,7 +109,7 @@ local function RequestPlayerSpells(playerId)
         return {}
     end
 
-    local spells = lib.callback.await('th_power:professorFetchPlayerSpells', false, playerId) or {}
+    local spells = lib.callback.await('dvr_power:professorFetchPlayerSpells', false, playerId) or {}
     return ApplyServerSpellData(playerId, spells)
 end
 
@@ -144,7 +144,7 @@ local function LoadAllPlayerSpells()
         return
     end
 
-    local players = lib.callback.await('th_power:professorGetPlayers', false)
+    local players = lib.callback.await('dvr_power:professorGetPlayers', false)
     
     if players and #players > 0 then
         for _, playerData in ipairs(players) do
@@ -201,7 +201,7 @@ local function OpenProfessorNuiMenu()
         end
     end
     
-    local allPlayers = lib.callback.await('th_power:professorGetPlayers', false) or {}
+    local allPlayers = lib.callback.await('dvr_power:professorGetPlayers', false) or {}
     
     SetNuiFocus(true, true)
     professorMenuOpen = true
@@ -227,7 +227,7 @@ RegisterCommand('professor', function()
     OpenProfessorNuiMenu()
 end, false)
 
-RegisterNetEvent('th_power:receivePlayerSpells', function(playerId, spells)
+RegisterNetEvent('dvr_power:receivePlayerSpells', function(playerId, spells)
     ApplyServerSpellData(playerId, spells or {})
     
     if professorMenuOpen then
@@ -253,7 +253,7 @@ RegisterNetEvent('esx:playerLoaded', function()
     end)
 end)
 
-RegisterNetEvent('th_power:professorSpellAction', function(action, playerName, spellName, success, playerId, spellId, isTemporary, level)
+RegisterNetEvent('dvr_power:professorSpellAction', function(action, playerName, spellName, success, playerId, spellId, isTemporary, level)
     SendNUIMessage({
         action = 'professorSpellAction',
         actionType = action,
@@ -280,7 +280,7 @@ end)
 
 exports('openProfessorMenu', OpenProfessorNuiMenu)
 
-RegisterNetEvent('th_power:professorTempSpells', function(tempSpells)
+RegisterNetEvent('dvr_power:professorTempSpells', function(tempSpells)
     SendNUIMessage({
         action = 'professorTempSpells',
         tempSpells = tempSpells or {}
@@ -310,8 +310,8 @@ RegisterNUICallback('professorGetData', function(data, cb)
         end
     end
     
-    local allPlayers = lib.callback.await('th_power:professorGetPlayers', false) or {}
-    local tempSpells = lib.callback.await('th_power:professorGetTempSpells', false) or {}
+    local allPlayers = lib.callback.await('dvr_power:professorGetPlayers', false) or {}
+    local tempSpells = lib.callback.await('dvr_power:professorGetTempSpells', false) or {}
     
     SendNUIMessage({
         action = 'professorAllSpells',
@@ -333,7 +333,7 @@ end)
 
 RegisterNUICallback('professorGetNearbyPlayers', function(data, cb)
     local radius = tonumber(data.radius) or 10.0
-    local nearbyPlayers = lib.callback.await('th_power:professorGetNearbyPlayers', false, radius) or {}
+    local nearbyPlayers = lib.callback.await('dvr_power:professorGetNearbyPlayers', false, radius) or {}
     if not nearbyPlayers or #nearbyPlayers == 0 then
         nearbyPlayers = GetNearbyPlayers(radius)
     end
@@ -351,7 +351,7 @@ RegisterNUICallback('professorGiveTempSpell', function(data, cb)
     local spellId = data.spellId
     local level = data.level or 0
     
-    TriggerServerEvent('th_power:professorGiveTempSpell', playerId, spellId, level)
+    TriggerServerEvent('dvr_power:professorGiveTempSpell', playerId, spellId, level)
     
     cb('ok')
 end)
@@ -361,7 +361,7 @@ RegisterNUICallback('professorGiveSpell', function(data, cb)
     local spellId = data.spellId
     local level = tonumber(data.level) or 0
 
-    TriggerServerEvent('th_power:professorGiveSpell', playerId, spellId, level)
+    TriggerServerEvent('dvr_power:professorGiveSpell', playerId, spellId, level)
 
     cb('ok')
 end)
@@ -377,7 +377,7 @@ RegisterNUICallback('professorGiveSpellToMultiple', function(data, cb)
         return
     end
 
-    TriggerServerEvent('th_power:professorGiveSpellToMultiple', playerIds, spellId, level)
+    TriggerServerEvent('dvr_power:professorGiveSpellToMultiple', playerIds, spellId, level)
 
     cb('ok')
 end)
@@ -385,14 +385,14 @@ end)
 RegisterNUICallback('professorGiveSkillPoint', function(data, cb)
     local playerId = data.playerId
     local amount = tonumber(data.amount) or 1
-    TriggerServerEvent('th_power:professorGiveSkillPoint', playerId, amount)
+    TriggerServerEvent('dvr_power:professorGiveSkillPoint', playerId, amount)
     cb('ok')
 end)
 
 RegisterNUICallback('professorRemoveSkillPoint', function(data, cb)
     local playerId = data.playerId
     local amount = tonumber(data.amount) or 1
-    TriggerServerEvent('th_power:professorRemoveSkillPoint', playerId, amount)
+    TriggerServerEvent('dvr_power:professorRemoveSkillPoint', playerId, amount)
     cb('ok')
 end)
 
@@ -400,7 +400,7 @@ RegisterNUICallback('professorRemoveSkillLevel', function(data, cb)
     local playerId = data.playerId
     local skillId = data.skillId
     local amount = tonumber(data.amount) or 1
-    TriggerServerEvent('th_power:professorRemoveSkillLevel', playerId, skillId, amount)
+    TriggerServerEvent('dvr_power:professorRemoveSkillLevel', playerId, skillId, amount)
     cb('ok')
 end)
 
@@ -408,7 +408,7 @@ RegisterNUICallback('professorRemoveTempSpell', function(data, cb)
     local playerId = data.playerId
     local spellId = data.spellId
     
-    TriggerServerEvent('th_power:professorRemoveTempSpell', playerId, spellId)
+    TriggerServerEvent('dvr_power:professorRemoveTempSpell', playerId, spellId)
     
     cb('ok')
 end)
@@ -418,16 +418,16 @@ RegisterNUICallback('professorUpdateTempSpellLevel', function(data, cb)
     local spellId = data.spellId
     local level = data.level or 0
     
-    TriggerServerEvent('th_power:professorUpdateTempSpellLevel', playerId, spellId, level)
+    TriggerServerEvent('dvr_power:professorUpdateTempSpellLevel', playerId, spellId, level)
     
     cb('ok')
 end)
 
 RegisterNUICallback('professorGetPlayerSpells', function(data, cb)
     local playerId = data.playerId
-    local spells = lib.callback.await('th_power:professorFetchPlayerSpells', false, playerId) or {}
-    local skillPoints = lib.callback.await('th_power:professorGetSkillPoints', false, playerId) or 0
-    local skillLevels = lib.callback.await('th_power:professorGetSkillLevels', false, playerId) or {}
+    local spells = lib.callback.await('dvr_power:professorFetchPlayerSpells', false, playerId) or {}
+    local skillPoints = lib.callback.await('dvr_power:professorGetSkillPoints', false, playerId) or 0
+    local skillLevels = lib.callback.await('dvr_power:professorGetSkillLevels', false, playerId) or {}
     
     SendNUIMessage({
         action = 'professorPlayerSpells',
@@ -453,7 +453,7 @@ end)
 
 RegisterNUICallback('professorFetchSkillLevels', function(data, cb)
     local playerId = data.playerId
-    local skillLevels = lib.callback.await('th_power:professorGetSkillLevels', false, playerId) or {}
+    local skillLevels = lib.callback.await('dvr_power:professorGetSkillLevels', false, playerId) or {}
     SendNUIMessage({
         action = 'professorPlayerSkillLevels',
         playerId = playerId,
@@ -468,7 +468,7 @@ RegisterNUICallback('professorSetSpellLevel', function(data, cb)
     local spellId = data.spellId
     local level = data.level or 0
     
-    TriggerServerEvent('th_power:professorSetSpellLevel', playerId, spellId, level)
+    TriggerServerEvent('dvr_power:professorSetSpellLevel', playerId, spellId, level)
     
     cb('ok')
 end)
@@ -477,7 +477,7 @@ RegisterNUICallback('professorRemoveSpell', function(data, cb)
     local playerId = data.playerId
     local spellId = data.spellId
     
-    TriggerServerEvent('th_power:professorRemoveSpell', playerId, spellId)
+    TriggerServerEvent('dvr_power:professorRemoveSpell', playerId, spellId)
     
     cb('ok')
 end)
@@ -485,7 +485,7 @@ end)
 RegisterNUICallback('professorResetCooldowns', function(data, cb)
     local playerId = data.playerId
     
-    TriggerServerEvent('th_power:professorResetCooldowns', playerId)
+    TriggerServerEvent('dvr_power:professorResetCooldowns', playerId)
     
     cb('ok')
 end)
@@ -493,7 +493,7 @@ end)
 RegisterNUICallback('professorGiveAllSpells', function(data, cb)
     local playerId = data.playerId
     
-    TriggerServerEvent('th_power:professorGiveAllSpells', playerId)
+    TriggerServerEvent('dvr_power:professorGiveAllSpells', playerId)
     
     cb('ok')
 end)
@@ -501,7 +501,7 @@ end)
 RegisterNUICallback('professorRemoveAllSpells', function(data, cb)
     local playerId = data.playerId
     
-    TriggerServerEvent('th_power:professorRemoveAllSpells', playerId)
+    TriggerServerEvent('dvr_power:professorRemoveAllSpells', playerId)
     
     cb('ok')
 end)
@@ -510,7 +510,7 @@ RegisterNUICallback('professorSetGlobalLevel', function(data, cb)
     local playerId = data.playerId
     local level = data.level or 0
     
-    TriggerServerEvent('th_power:professorSetGlobalLevel', playerId, level)
+    TriggerServerEvent('dvr_power:professorSetGlobalLevel', playerId, level)
     
     cb('ok')
 end)

@@ -14,7 +14,7 @@ function Utils.LogSpellCast(data)
 
     if not _G.TH_Power or not _G.TH_Power.Log then
         if Config and Config.Logs and Config.Logs.debug then
-            print('[th_power] Utils.LogSpellCast: Log module absent, impossible d\'envoyer le log')
+            print('[dvr_power] Utils.LogSpellCast: Log module absent, impossible d\'envoyer le log')
         end
         return
     end

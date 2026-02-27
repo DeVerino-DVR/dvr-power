@@ -52,9 +52,9 @@ end
 ---@param targetId number Server ID of the player to check
 ---@return boolean
 local function HasProtheaShield(targetId)
-    if exports['th_prothea'] and exports['th_prothea'].hasActiveShield then
+    if exports['dvr_prothea'] and exports['dvr_prothea'].hasActiveShield then
         local success, result = pcall(function()
-            return exports['th_prothea']:hasActiveShield(targetId)
+            return exports['dvr_prothea']:hasActiveShield(targetId)
         end)
         return success and result == true
     end
@@ -164,7 +164,7 @@ function DamageSystem.ApplySpellDamage(coords, spellLevel, damagePerLevel, radiu
             local distanceFactor = math.max(0.3, 1.0 - (playerData.distance / radius))
             local actualRagdollForce = ragdollForce * distanceFactor
             
-            TriggerClientEvent('th_power:protectFromExplosion', targetId, protection, damage, level, spellName, {
+            TriggerClientEvent('dvr_power:protectFromExplosion', targetId, protection, damage, level, spellName, {
                 ragdollDuration = ragdollDuration,
                 ragdollForce = actualRagdollForce,
                 explosionCoords = coords

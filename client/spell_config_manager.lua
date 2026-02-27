@@ -6,7 +6,7 @@ local CONFIGURABLE_SPELLS = { 'transvalis' }
 local function LoadSpellConfig(spellId)
     if not spellId then return {} end
 
-    local kvpKey = 'th_power_spell_config_' .. spellId
+    local kvpKey = 'dvr_power_spell_config_' .. spellId
     local configJson = GetResourceKvpString(kvpKey)
 
     if configJson and configJson ~= '' then
@@ -24,7 +24,7 @@ local function SaveSpellConfig(spellId, config, skipCallback)
     if not spellId or not config then return false end
 
     spellConfigs[spellId] = config
-    local kvpKey = 'th_power_spell_config_' .. spellId
+    local kvpKey = 'dvr_power_spell_config_' .. spellId
     local configJson = json.encode(config)
     SetResourceKvp(kvpKey, configJson)
 
@@ -84,12 +84,12 @@ local function RegisterConfigurableSpell(spellId)
 end
 
 local function OpenSpellConfigMenu()
-    local selectedSpell = exports['th_power'] and exports['th_power'].getSelectedSpell and exports['th_power']:getSelectedSpell()
+    local selectedSpell = exports['dvr_power'] and exports['dvr_power'].getSelectedSpell and exports['dvr_power']:getSelectedSpell()
 
     if selectedSpell then
         for _, configurableSpellId in ipairs(CONFIGURABLE_SPELLS) do
             if selectedSpell == configurableSpellId then
-                TriggerEvent('th_power:openSpellConfig', selectedSpell)
+                TriggerEvent('dvr_power:openSpellConfig', selectedSpell)
                 return
             end
         end
@@ -106,8 +106,8 @@ local function OpenSpellConfigMenu()
 
     local availableSpells = {}
 
-    if exports['th_power'] and exports['th_power'].getPlayerSpells then
-        local playerSpells = exports['th_power']:getPlayerSpells() or {}
+    if exports['dvr_power'] and exports['dvr_power'].getPlayerSpells then
+        local playerSpells = exports['dvr_power']:getPlayerSpells() or {}
         local playerSpellSet = {}
         for _, spellId in ipairs(playerSpells) do
             playerSpellSet[spellId] = true
@@ -115,7 +115,7 @@ local function OpenSpellConfigMenu()
 
         for _, spellId in ipairs(CONFIGURABLE_SPELLS) do
             if playerSpellSet[spellId] then
-                local spellInfo = exports['th_power'] and exports['th_power'].GetSpellInfo and exports['th_power']:GetSpellInfo(spellId)
+                local spellInfo = exports['dvr_power'] and exports['dvr_power'].GetSpellInfo and exports['dvr_power']:GetSpellInfo(spellId)
                 if spellInfo then
                     table.insert(availableSpells, {
                         id = spellInfo.id,
@@ -159,7 +159,7 @@ local function OpenSpellConfigMenu()
         options = menuOptions
     }, function(selected, scrollIndex, args)
         if args and args.spellId then
-            TriggerEvent('th_power:openSpellConfig', args.spellId)
+            TriggerEvent('dvr_power:openSpellConfig', args.spellId)
         end
     end)
 
@@ -173,8 +173,8 @@ end, false)
 RegisterKeyMapping('spell_config_menu', '~g~(SORTS)~s~ Configuration Sorts', 'keyboard', Config.SpellKeys.spellConfigMenu)
 
 spellConfigCallbacks['transvalis'] = function(config)
-    if exports['th_transvalis'] and exports['th_transvalis'].OpenTransvalisConfigMenu then
-        exports['th_transvalis']:OpenTransvalisConfigMenu()
+    if exports['dvr_transvalis'] and exports['dvr_transvalis'].OpenTransvalisConfigMenu then
+        exports['dvr_transvalis']:OpenTransvalisConfigMenu()
     else
         lib.notify({
             title = 'Configuration Transvalis',
@@ -184,8 +184,8 @@ spellConfigCallbacks['transvalis'] = function(config)
     end
 end
 
-RegisterNetEvent('th_power:openSpellConfig')
-AddEventHandler('th_power:openSpellConfig', function(spellId)
+RegisterNetEvent('dvr_power:openSpellConfig')
+AddEventHandler('dvr_power:openSpellConfig', function(spellId)
     if spellConfigCallbacks[spellId] then
         spellConfigCallbacks[spellId](GetSpellConfig(spellId))
     else
@@ -197,8 +197,8 @@ AddEventHandler('th_power:openSpellConfig', function(spellId)
     end
 end)
 
-RegisterNetEvent('th_power:registerConfigurableSpell')
-AddEventHandler('th_power:registerConfigurableSpell', function(spellId)
+RegisterNetEvent('dvr_power:registerConfigurableSpell')
+AddEventHandler('dvr_power:registerConfigurableSpell', function(spellId)
     RegisterConfigurableSpell(spellId)
 end)
 

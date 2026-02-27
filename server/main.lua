@@ -34,7 +34,7 @@ local STAFF_GROUPS <const> = {
     staff = true,
     owner = true
 }
-local math_sqrt <const> = math.sqrt
+local madvr_sqrt <const> = math.sqrt
 
 local function canManageSpells(src)
     local xPlayer <const> = ESX.GetPlayerFromId(src)
@@ -63,7 +63,7 @@ local function IsStaffMember(src)
         end
     end
 
-    if IsPlayerAceAllowed and IsPlayerAceAllowed(src, 'th_power.staff') then
+    if IsPlayerAceAllowed and IsPlayerAceAllowed(src, 'dvr_power.staff') then
         return true
     end
 
@@ -556,7 +556,7 @@ RemoveModuleInternal = function(moduleName, skipClientEvent)
     moduleCount = math.max(0, moduleCount - 1)
 
     if not skipClientEvent then
-        TriggerClientEvent('th_power:unregisterModule', -1, moduleName)
+        TriggerClientEvent('dvr_power:unregisterModule', -1, moduleName)
     end
 
     return true
@@ -601,7 +601,7 @@ RegisterModuleInternal = function(moduleData, source, skipClientEvent)
     end
 
     if not skipClientEvent then
-        TriggerClientEvent('th_power:registerModule', -1, moduleData)
+        TriggerClientEvent('dvr_power:registerModule', -1, moduleData)
     end
 
     CleanSpellsWithKeys()
@@ -948,7 +948,7 @@ AddEventHandler('onResourceStart', function(resourceName)
             if player and player.identifier then
                 local spellsData <const> = LoadPlayerSpells(player.identifier)
                 
-                TriggerClientEvent('th_power:loadSpells', playerId, spellsData.list, spellsData.levels)
+                TriggerClientEvent('dvr_power:loadSpells', playerId, spellsData.list, spellsData.levels)
             end
             
             ::continue::
@@ -979,18 +979,18 @@ AddEventHandler('esx:playerLoaded', function(source, xplayer)
         Wait(2000)
         
         for moduleName, moduleInfo in pairs(registeredModules) do
-            TriggerClientEvent('th_power:registerModule', source, moduleInfo.data)
+            TriggerClientEvent('dvr_power:registerModule', source, moduleInfo.data)
         end
         
         Wait(1000)
         
         local spellsData <const> = LoadPlayerSpells(xplayer.identifier)
         
-        TriggerClientEvent('th_power:loadSpells', source, spellsData.list, spellsData.levels)
+        TriggerClientEvent('dvr_power:loadSpells', source, spellsData.list, spellsData.levels)
     end)
 end)
 
-RegisterNetEvent('th_power:playSpellSound', function(spellId, coords)
+RegisterNetEvent('dvr_power:playSpellSound', function(spellId, coords)
     local source <const> = source
     local spell <const> = GetSpellDefinition(spellId)
     if not spell or not spell.sound or spell.sound == '' then
@@ -1009,19 +1009,19 @@ RegisterNetEvent('th_power:playSpellSound', function(spellId, coords)
     
     local soundId <const> = 'spell_' .. spellId .. '_' .. source .. '_' .. os.time()
     
-    TriggerClientEvent('th_power:playSpellSound', -1, soundId, spell.sound, coords, spellId)
+    TriggerClientEvent('dvr_power:playSpellSound', -1, soundId, spell.sound, coords, spellId)
 end)
 
-RegisterNetEvent('th_power:requestRemoveLight', function(lightId)
+RegisterNetEvent('dvr_power:requestRemoveLight', function(lightId)
     local source <const> = source
 
     if activeLights[lightId] and activeLights[lightId].playerId == source then
-        TriggerClientEvent('th_power:removeLight', -1, lightId)
+        TriggerClientEvent('dvr_power:removeLight', -1, lightId)
         activeLights[lightId] = nil
     end
 end)
 
-RegisterNetEvent('th_power:requestModuleSync', function()
+RegisterNetEvent('dvr_power:requestModuleSync', function()
     local src <const> = source
     local now <const> = os.time()
     if lastModuleSyncRequest[src] and (now - lastModuleSyncRequest[src]) < 2 then
@@ -1035,13 +1035,13 @@ RegisterNetEvent('th_power:requestModuleSync', function()
     FlushPendingModules()
 
     for _, moduleEntry in pairs(registeredModules) do
-        TriggerClientEvent('th_power:registerModule', src, moduleEntry.data)
+        TriggerClientEvent('dvr_power:registerModule', src, moduleEntry.data)
     end
 
     local player <const> = ESX.GetPlayerFromId(src)
     if player and player.identifier then
         local combinedList <const>, combinedLevels <const> = BuildSpellSnapshot(player.identifier)
-        TriggerClientEvent('th_power:loadSpells', src, combinedList, combinedLevels)
+        TriggerClientEvent('dvr_power:loadSpells', src, combinedList, combinedLevels)
     end
 end)
 
@@ -1194,9 +1194,9 @@ local function BuildStaffSpellList()
     return spells
 end
 
-lib.callback.register('th_power:staffGetSpells', function(source)
+lib.callback.register('dvr_power:staffGetSpells', function(source)
     if not IsStaffMember(source) then
-        TriggerClientEvent('th_power:staffSpellResult', source, false, 'Accès staff requis.')
+        TriggerClientEvent('dvr_power:staffSpellResult', source, false, 'Accès staff requis.')
         return {}
     end
 
@@ -1204,21 +1204,21 @@ lib.callback.register('th_power:staffGetSpells', function(source)
     return BuildStaffSpellList()
 end)
 
-RegisterNetEvent('th_power:staffGiveSpell', function(spellId, level, removeSpell, targetPlayerId)
+RegisterNetEvent('dvr_power:staffGiveSpell', function(spellId, level, removeSpell, targetPlayerId)
     local src <const> = source
     if not IsStaffMember(src) then
-        TriggerClientEvent('th_power:staffSpellResult', src, false, 'Accès staff requis.')
+        TriggerClientEvent('dvr_power:staffSpellResult', src, false, 'Accès staff requis.')
         return
     end
 
     if type(spellId) ~= 'string' or spellId == '' then
-        TriggerClientEvent('th_power:staffSpellResult', src, false, 'Sort invalide.')
+        TriggerClientEvent('dvr_power:staffSpellResult', src, false, 'Sort invalide.')
         return
     end
 
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:staffSpellResult', src, false, 'Sort introuvable.')
+        TriggerClientEvent('dvr_power:staffSpellResult', src, false, 'Sort introuvable.')
         return
     end
 
@@ -1228,7 +1228,7 @@ RegisterNetEvent('th_power:staffGiveSpell', function(spellId, level, removeSpell
     local identifier <const> = xPlayer and (xPlayer.identifier or (xPlayer.getIdentifier and xPlayer.getIdentifier()))
 
     if not identifier then
-        TriggerClientEvent('th_power:staffSpellResult', src, false, 'Identifiant joueur introuvable.')
+        TriggerClientEvent('dvr_power:staffSpellResult', src, false, 'Identifiant joueur introuvable.')
         return
     end
 
@@ -1244,9 +1244,9 @@ RegisterNetEvent('th_power:staffGiveSpell', function(spellId, level, removeSpell
 
         if not hadSpell and (not result or (type(result) == 'table' and (result.affectedRows or 0) == 0)) then
             if isSelf then
-                TriggerClientEvent('th_power:staffSpellResult', src, false, 'Vous ne possédez pas ce sort.')
+                TriggerClientEvent('dvr_power:staffSpellResult', src, false, 'Vous ne possédez pas ce sort.')
             else
-                TriggerClientEvent('th_power:staffSpellResult', src, false, targetName .. ' ne possède pas ce sort.')
+                TriggerClientEvent('dvr_power:staffSpellResult', src, false, targetName .. ' ne possède pas ce sort.')
             end
             return
         end
@@ -1264,13 +1264,13 @@ RegisterNetEvent('th_power:staffGiveSpell', function(spellId, level, removeSpell
         end
 
         local updatedSpells <const> = LoadPlayerSpells(identifier)
-        TriggerClientEvent('th_power:loadSpells', targetSrc, updatedSpells.list, updatedSpells.levels)
-        TriggerClientEvent('th_power:spellRemoved', targetSrc, spellId, spell.name or spellId)
+        TriggerClientEvent('dvr_power:loadSpells', targetSrc, updatedSpells.list, updatedSpells.levels)
+        TriggerClientEvent('dvr_power:spellRemoved', targetSrc, spellId, spell.name or spellId)
 
         if isSelf then
-            TriggerClientEvent('th_power:staffSpellResult', src, true, ('%s retiré.'):format(spell.name or spellId))
+            TriggerClientEvent('dvr_power:staffSpellResult', src, true, ('%s retiré.'):format(spell.name or spellId))
         else
-            TriggerClientEvent('th_power:staffSpellResult', src, true, ('%s retiré à %s.'):format(spell.name or spellId, targetName))
+            TriggerClientEvent('dvr_power:staffSpellResult', src, true, ('%s retiré à %s.'):format(spell.name or spellId, targetName))
         end
         return
     end
@@ -1301,13 +1301,13 @@ RegisterNetEvent('th_power:staffGiveSpell', function(spellId, level, removeSpell
     end
 
     local spellsData <const> = LoadPlayerSpells(identifier)
-    TriggerClientEvent('th_power:loadSpells', targetSrc, spellsData.list, spellsData.levels)
-    TriggerClientEvent('th_power:updateSpellLevel', targetSrc, spellId, finalLevel)
+    TriggerClientEvent('dvr_power:loadSpells', targetSrc, spellsData.list, spellsData.levels)
+    TriggerClientEvent('dvr_power:updateSpellLevel', targetSrc, spellId, finalLevel)
 
     if isSelf then
-        TriggerClientEvent('th_power:staffSpellResult', src, true, ('%s niveau %d appliqué.'):format(spell.name or spellId, finalLevel))
+        TriggerClientEvent('dvr_power:staffSpellResult', src, true, ('%s niveau %d appliqué.'):format(spell.name or spellId, finalLevel))
     else
-        TriggerClientEvent('th_power:staffSpellResult', src, true, ('%s niveau %d attribué à %s.'):format(spell.name or spellId, finalLevel, targetName))
+        TriggerClientEvent('dvr_power:staffSpellResult', src, true, ('%s niveau %d attribué à %s.'):format(spell.name or spellId, finalLevel, targetName))
     end
 end)
 
@@ -1324,10 +1324,10 @@ lib.addCommand('givespell', {
         return
     end
 
-    TriggerClientEvent('th_power:openStaffSpellMenu', source)
+    TriggerClientEvent('dvr_power:openStaffSpellMenu', source)
 end)
 
-RegisterNetEvent('th_power:castSpell', function(spellId, targetCoords, targetServerId)
+RegisterNetEvent('dvr_power:castSpell', function(spellId, targetCoords, targetServerId)
     local source = source
     local player <const> = ESX.GetPlayerFromId(source)
     
@@ -1366,7 +1366,7 @@ RegisterNetEvent('th_power:castSpell', function(spellId, targetCoords, targetSer
 
     if ShouldUseTrainingVersion(spellId, clampedLevel) then
         ApplyCooldown(source, spellId, cooldownDuration)
-        TriggerClientEvent('th_power:spellTrainingEffect', -1, source, spellId, clampedLevel)
+        TriggerClientEvent('dvr_power:spellTrainingEffect', -1, source, spellId, clampedLevel)
         
         lib.notify(source, {
             title = 'Sort instable',
@@ -1386,7 +1386,7 @@ RegisterNetEvent('th_power:castSpell', function(spellId, targetCoords, targetSer
             if damage > 0 then
                 HPSystem.DealDamage(source, damage, source, spellId)
             end
-            TriggerClientEvent('th_power:spellBackfire', -1, source, spellId, clampedLevel)
+            TriggerClientEvent('dvr_power:spellBackfire', -1, source, spellId, clampedLevel)
             lib.notify(source, {
                 title = 'Retour de flamme',
                 description = ('%s vous échappe des mains !'):format(spell.name or spellId),
@@ -1403,20 +1403,20 @@ RegisterNetEvent('th_power:castSpell', function(spellId, targetCoords, targetSer
 
     ApplyCooldown(source, spellId, cooldownDuration)
     
-    TriggerClientEvent('th_power:spellCast', -1, source, spellId, targetCoords, clampedLevel)
+    TriggerClientEvent('dvr_power:spellCast', -1, source, spellId, targetCoords, clampedLevel)
     
     if moduleEntry and moduleEntry.spell and moduleEntry.spell.onCast then
         local cast <const> = CreateCastFunction(source)
         local ok, err = pcall(moduleEntry.spell.onCast, true, { hit = true, hitCoords = targetCoords, entityHit = targetServerId }, source, targetServerId, clampedLevel, cast)
         if not ok then
-            print(('[th_power] onCast error for spell "%s": %s'):format(spellId, err or 'unknown'))
+            print(('[dvr_power] onCast error for spell "%s": %s'):format(spellId, err or 'unknown'))
         end
     end
 
     --ReduceWandDurability(source)
 end)
 
-RegisterNetEvent('th_power:stolenWandBackfire', function(spellId)
+RegisterNetEvent('dvr_power:stolenWandBackfire', function(spellId)
     local source <const> = source
     local player <const> = ESX.GetPlayerFromId(source)
     
@@ -1434,7 +1434,7 @@ RegisterNetEvent('th_power:stolenWandBackfire', function(spellId)
 
     HPSystem.DealDamage(source, STOLEN_WAND_BACKFIRE_DAMAGE, source, 'stolen_wand_backfire')
 
-    TriggerClientEvent('th_power:spellBackfire', -1, source, spellId or 'unknown', 0)
+    TriggerClientEvent('dvr_power:spellBackfire', -1, source, spellId or 'unknown', 0)
 
     LogDiscord({
         title = 'Baguette Volée - Backfire',
@@ -1465,7 +1465,7 @@ CreateThread(function()
         local currentTime <const> = os.time()
         for lightId, light in pairs(activeLights) do
             if light.endTime <= currentTime then
-                TriggerClientEvent('th_power:removeLight', -1, lightId)
+                TriggerClientEvent('dvr_power:removeLight', -1, lightId)
                 activeLights[lightId] = nil
             end
         end
@@ -1505,34 +1505,34 @@ local function BroadcastTempSpells()
         local player <const> = entry and entry.player or nil
         local job <const> = player and player.job or nil
         if job and (job.name == 'wand_professeur' or job.name == 'professeur' or job.name == 'direction') then
-            TriggerClientEvent('th_power:professorTempSpells', playerId, payload)
+            TriggerClientEvent('dvr_power:professorTempSpells', playerId, payload)
         end
     end)
 end
 
-RegisterNetEvent('th_power:professorGiveTempSpell', function(targetPlayerId, spellId, level)
+RegisterNetEvent('dvr_power:professorGiveTempSpell', function(targetPlayerId, spellId, level)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
         return
     end
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     
     if not professor or not targetPlayer then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
         return
     end
     
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spellId, false)
         return
     end
     
     local identifier <const> = targetPlayer.identifier
     if not identifier then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
@@ -1541,7 +1541,7 @@ RegisterNetEvent('th_power:professorGiveTempSpell', function(targetPlayerId, spe
     end
     
     if temporarySpells[identifier][spellId] then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
     
@@ -1550,9 +1550,9 @@ RegisterNetEvent('th_power:professorGiveTempSpell', function(targetPlayerId, spe
     
     local allSpells <const>, allLevels <const> = BuildSpellSnapshot(identifier)
 
-    TriggerClientEvent('th_power:loadSpells', targetPlayerId, allSpells, allLevels)
-    TriggerClientEvent('th_power:updateSpellLevel', targetPlayerId, spellId, spellLevel)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, true, targetPlayerId, spellId, true, spellLevel)
+    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, allSpells, allLevels)
+    TriggerClientEvent('dvr_power:updateSpellLevel', targetPlayerId, spellId, spellLevel)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, true, targetPlayerId, spellId, true, spellLevel)
     
     LogDiscord('give_temp', {
         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -1564,7 +1564,7 @@ RegisterNetEvent('th_power:professorGiveTempSpell', function(targetPlayerId, spe
     BroadcastTempSpells()
 end)
 
-RegisterNetEvent('th_power:professorRemoveTempSpell', function(targetPlayerId, spellId)
+RegisterNetEvent('dvr_power:professorRemoveTempSpell', function(targetPlayerId, spellId)
     local source <const> = source
     if not canManageSpells(source) then
         return
@@ -1590,7 +1590,7 @@ RegisterNetEvent('th_power:professorRemoveTempSpell', function(targetPlayerId, s
     
     if targetPlayer and identifier then
         local allSpells <const>, allLevels <const> = BuildSpellSnapshot(identifier)
-        TriggerClientEvent('th_power:loadSpells', targetPlayerId, allSpells, allLevels)
+        TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, allSpells, allLevels)
     end
     
     local playerIdStr <const> = tostring(targetPlayerId)
@@ -1614,7 +1614,7 @@ RegisterNetEvent('th_power:professorRemoveTempSpell', function(targetPlayerId, s
     BroadcastTempSpells()
 end)
 
-RegisterNetEvent('th_power:professorUpdateTempSpellLevel', function(targetPlayerId, spellId, level)
+RegisterNetEvent('dvr_power:professorUpdateTempSpellLevel', function(targetPlayerId, spellId, level)
     local source <const> = source
     if not canManageSpells(source) then
         return
@@ -1633,7 +1633,7 @@ RegisterNetEvent('th_power:professorUpdateTempSpellLevel', function(targetPlayer
     
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Modification', targetPlayer.getName(), spellId, false, targetPlayerId, spellId, true)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Modification', targetPlayer.getName(), spellId, false, targetPlayerId, spellId, true)
         return
     end
     
@@ -1656,10 +1656,10 @@ RegisterNetEvent('th_power:professorUpdateTempSpellLevel', function(targetPlayer
     
     local allSpells <const>, allLevels <const> = BuildSpellSnapshot(identifier)
     
-    TriggerClientEvent('th_power:updateSpellLevel', targetPlayerId, spellId, spellLevel)
+    TriggerClientEvent('dvr_power:updateSpellLevel', targetPlayerId, spellId, spellLevel)
     Wait(100)
-    TriggerClientEvent('th_power:loadSpells', targetPlayerId, allSpells, allLevels)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Modification', targetPlayer.getName(), spell.name or spellId, true, targetPlayerId, spellId, true, spellLevel)
+    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, allSpells, allLevels)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Modification', targetPlayer.getName(), spell.name or spellId, true, targetPlayerId, spellId, true, spellLevel)
 
     LogDiscord('set_temp_level', {
         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -1682,7 +1682,7 @@ AddEventHandler('onResourceStop', function(resourceName)
     
     local lightCount = 0
     for lightId, _ in pairs(activeLights or {}) do
-        TriggerClientEvent('th_power:removeLight', -1, lightId)
+        TriggerClientEvent('dvr_power:removeLight', -1, lightId)
         lightCount = lightCount + 1
     end
     activeLights = {}
@@ -1699,28 +1699,28 @@ AddEventHandler('onResourceStop', function(resourceName)
     bootstrapReady = false
 end)
 
-RegisterNetEvent('th_power:professorGiveSpell', function(targetPlayerId, spellId, level)
+RegisterNetEvent('dvr_power:professorGiveSpell', function(targetPlayerId, spellId, level)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
         return
     end
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
 
     if not professor or not targetPlayer then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueur', 'Sort', false)
         return
     end
 
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spellId, false)
         return
     end
 
     if playerSpells[targetPlayer.identifier] and playerSpells[targetPlayer.identifier][spellId] then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
@@ -1745,8 +1745,8 @@ RegisterNetEvent('th_power:professorGiveSpell', function(targetPlayerId, spellId
     })
 
     local updatedSpells <const> = LoadPlayerSpells(targetPlayer.identifier)
-    TriggerClientEvent('th_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, true)
+    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', targetPlayer.getName(), spell.name or spellId, true)
 
     LogDiscord('give_def', {
         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -1757,27 +1757,27 @@ RegisterNetEvent('th_power:professorGiveSpell', function(targetPlayerId, spellId
 end)
 
 
-RegisterNetEvent('th_power:professorGiveSpellToMultiple', function(playerIds, spellId, level)
+RegisterNetEvent('dvr_power:professorGiveSpellToMultiple', function(playerIds, spellId, level)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueurs', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueurs', 'Sort', false)
         return
     end
 
     local professor <const> = ESX.GetPlayerFromId(source)
     if not professor then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueurs', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueurs', 'Sort', false)
         return
     end
 
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueurs', spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueurs', spellId, false)
         return
     end
 
     if not playerIds or type(playerIds) ~= 'table' or #playerIds == 0 then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Joueurs', spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Joueurs', spell.name or spellId, false)
         return
     end
 
@@ -1814,7 +1814,7 @@ RegisterNetEvent('th_power:professorGiveSpellToMultiple', function(playerIds, sp
 
                 if success and result then
                     local updatedSpells <const> = LoadPlayerSpells(targetPlayer.identifier)
-                    TriggerClientEvent('th_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
+                    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
                     
                     LogDiscord('give_def_bulk', {
                         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -1825,7 +1825,7 @@ RegisterNetEvent('th_power:professorGiveSpellToMultiple', function(playerIds, sp
                     
                     successCount = successCount + 1
                 else
-                    print(('[th_power] Échec attribution sort %s à %s'):format(spellId, targetPlayer.identifier))
+                    print(('[dvr_power] Échec attribution sort %s à %s'):format(spellId, targetPlayer.identifier))
                     failedCount = failedCount + 1
                 end
             end
@@ -1839,39 +1839,39 @@ RegisterNetEvent('th_power:professorGiveSpellToMultiple', function(playerIds, sp
         message = message .. string.format(' (%d échec(s))', failedCount)
     end
     
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Attribution', 'Groupe', message, successCount > 0)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Attribution', 'Groupe', message, successCount > 0)
 end)
 
-RegisterNetEvent('th_power:professorGiveSkillPoint', function(targetPlayerId, amount)
+RegisterNetEvent('dvr_power:professorGiveSkillPoint', function(targetPlayerId, amount)
     local src <const> = source
     local professor <const> = ESX.GetPlayerFromId(src)
     if not professor or not professor.job or (professor.job.name ~= 'wand_professeur' and professor.job.name ~= 'professeur' and professor.job.name ~= 'direction') then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Point', 'Joueur', 'Compétence', false)
         return
     end
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     local points <const> = tonumber(amount) or 1
 
     if not targetPlayer or points <= 0 then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Point', 'Joueur', 'Compétence', false)
         return
     end
 
     if not IsWithinProfessorRange(src, targetPlayerId) then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Point', targetPlayer.getName(), 'Point de compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Point', targetPlayer.getName(), 'Point de compétence', false)
         return
     end
 
     TriggerEvent('ft_inventory:skills:addPointsServer', targetPlayerId, points)
 
-    TriggerClientEvent('th_power:professorSpellAction', src, 'Point', targetPlayer.getName(), 'Point de compétence', true, targetPlayerId, 'skill_point', true, points)
+    TriggerClientEvent('dvr_power:professorSpellAction', src, 'Point', targetPlayer.getName(), 'Point de compétence', true, targetPlayerId, 'skill_point', true, points)
 end)
 
-RegisterNetEvent('th_power:professorRemoveSkillPoint', function(targetPlayerId, amount)
+RegisterNetEvent('dvr_power:professorRemoveSkillPoint', function(targetPlayerId, amount)
     local src <const> = source
     local professor <const> = ESX.GetPlayerFromId(src)
     if not professor or not professor.job or (professor.job.name ~= 'wand_professeur' and professor.job.name ~= 'professeur' and professor.job.name ~= 'direction') then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
         return
     end
 
@@ -1879,19 +1879,19 @@ RegisterNetEvent('th_power:professorRemoveSkillPoint', function(targetPlayerId, 
     local points <const> = tonumber(amount) or 1
 
     if not targetPlayer or points <= 0 then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
         return
     end
 
     if not IsWithinProfessorRange(src, targetPlayerId) then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', targetPlayer.getName(), 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', targetPlayer.getName(), 'Compétence', false)
         return
     end
 
     TriggerEvent('ft_inventory:skills:removePointsServer', targetPlayerId, points)
 
     TriggerClientEvent(
-        'th_power:professorSpellAction',
+        'dvr_power:professorSpellAction',
         src,
         'Retrait point',
         targetPlayer.getName(),
@@ -1904,11 +1904,11 @@ RegisterNetEvent('th_power:professorRemoveSkillPoint', function(targetPlayerId, 
     )
 end)
 
-RegisterNetEvent('th_power:professorRemoveSkillLevel', function(targetPlayerId, skillId, amount)
+RegisterNetEvent('dvr_power:professorRemoveSkillLevel', function(targetPlayerId, skillId, amount)
     local src <const> = source
     local professor <const> = ESX.GetPlayerFromId(src)
     if not professor or not professor.job or (professor.job.name ~= 'wand_professeur' and professor.job.name ~= 'professeur' and professor.job.name ~= 'direction') then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
         return
     end
 
@@ -1916,12 +1916,12 @@ RegisterNetEvent('th_power:professorRemoveSkillLevel', function(targetPlayerId, 
     local points <const> = tonumber(amount) or 1
 
     if not targetPlayer or points <= 0 or type(skillId) ~= 'string' then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', 'Joueur', 'Compétence', false)
         return
     end
 
     if not IsWithinProfessorRange(src, targetPlayerId) then
-        TriggerClientEvent('th_power:professorSpellAction', src, 'Retrait point', targetPlayer.getName(), 'Compétence', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', src, 'Retrait point', targetPlayer.getName(), 'Compétence', false)
         return
     end
 
@@ -1936,7 +1936,7 @@ RegisterNetEvent('th_power:professorRemoveSkillLevel', function(targetPlayerId, 
     elseif skillId == 'maitrise' then skillLabel = 'Maîtrise' end
 
     TriggerClientEvent(
-        'th_power:professorSpellAction',
+        'dvr_power:professorSpellAction',
         src,
         'Retrait point',
         targetPlayer.getName(),
@@ -1949,29 +1949,29 @@ RegisterNetEvent('th_power:professorRemoveSkillLevel', function(targetPlayerId, 
     )
 end)
 
-RegisterNetEvent('th_power:professorRemoveSpell', function(targetPlayerId, spellId)
+RegisterNetEvent('dvr_power:professorRemoveSpell', function(targetPlayerId, spellId)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', 'Joueur', 'Sort', false)
         return
     end
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     
     if not professor or not targetPlayer then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', 'Joueur', 'Sort', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', 'Joueur', 'Sort', false)
         return
     end
     
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spellId, false)
         return
     end
     
     local identifier <const> = targetPlayer.identifier
     if not identifier then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
@@ -1981,7 +1981,7 @@ RegisterNetEvent('th_power:professorRemoveSpell', function(targetPlayerId, spell
     })
 
     if not result or (type(result) == 'table' and result.affectedRows == 0) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
@@ -1990,9 +1990,9 @@ RegisterNetEvent('th_power:professorRemoveSpell', function(targetPlayerId, spell
     end
     
     local updatedSpells <const> = LoadPlayerSpells(identifier)
-    TriggerClientEvent('th_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
-    TriggerClientEvent('th_power:spellRemoved', targetPlayerId, spellId, spell.name or spellId)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, true)
+    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, updatedSpells.list, updatedSpells.levels)
+    TriggerClientEvent('dvr_power:spellRemoved', targetPlayerId, spellId, spell.name or spellId)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Retrait', targetPlayer.getName(), spell.name or spellId, true)
 
     local playerIdStr <const> = tostring(targetPlayerId)
     if playerCooldowns[playerIdStr] and playerCooldowns[playerIdStr][spellId] then
@@ -2007,28 +2007,28 @@ RegisterNetEvent('th_power:professorRemoveSpell', function(targetPlayerId, spell
     })
 end)
 
-RegisterNetEvent('th_power:professorSetSpellLevel', function(targetPlayerId, spellId, newLevel)
+RegisterNetEvent('dvr_power:professorSetSpellLevel', function(targetPlayerId, spellId, newLevel)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', 'Joueur', spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', 'Joueur', spellId, false)
         return
     end
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     
     if not professor or not targetPlayer then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', 'Joueur', spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', 'Joueur', spellId, false)
         return
     end
 
     local spell <const> = GetSpellDefinition(spellId)
     if not spell then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spellId, false)
         return
     end
 
     if not playerSpells[targetPlayer.identifier] or not playerSpells[targetPlayer.identifier][spellId] then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
@@ -2041,21 +2041,21 @@ RegisterNetEvent('th_power:professorSetSpellLevel', function(targetPlayerId, spe
 
     local updated <const> = SetPlayerSpellLevel(targetPlayer.identifier, spellId, desiredLevel)
     if not updated then
-        print(('[th_power] Échec mise à niveau DB %s -> %s (identifier: %s)'):format(spellId, desiredLevel, targetPlayer.identifier))
+        print(('[dvr_power] Échec mise à niveau DB %s -> %s (identifier: %s)'):format(spellId, desiredLevel, targetPlayer.identifier))
     else
-        print(('[th_power] Niveau mis à jour %s -> %s pour %s'):format(spellId, desiredLevel, targetPlayer.identifier))
+        print(('[dvr_power] Niveau mis à jour %s -> %s pour %s'):format(spellId, desiredLevel, targetPlayer.identifier))
     end
     if not updated then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, false)
         return
     end
 
-    TriggerClientEvent('th_power:updateSpellLevel', targetPlayerId, spellId, desiredLevel)
+    TriggerClientEvent('dvr_power:updateSpellLevel', targetPlayerId, spellId, desiredLevel)
     local spellsData <const> = LoadPlayerSpells(targetPlayer.identifier)
-    TriggerClientEvent('th_power:loadSpells', targetPlayerId, spellsData.list, spellsData.levels)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, true)
+    TriggerClientEvent('dvr_power:loadSpells', targetPlayerId, spellsData.list, spellsData.levels)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Niveau', targetPlayer.getName(), spell.name or spellId, true)
 
-    TriggerClientEvent('th_power:receivePlayerSpells', source, targetPlayerId, playerSpells[targetPlayer.identifier] or {})
+    TriggerClientEvent('dvr_power:receivePlayerSpells', source, targetPlayerId, playerSpells[targetPlayer.identifier] or {})
 
     LogDiscord('set_level', {
         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -2065,17 +2065,17 @@ RegisterNetEvent('th_power:professorSetSpellLevel', function(targetPlayerId, spe
     })
 end)
 
-RegisterNetEvent('th_power:professorResetCooldowns', function(targetPlayerId)
+RegisterNetEvent('dvr_power:professorResetCooldowns', function(targetPlayerId)
     local source <const> = source
     if not canManageSpells(source) then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Reset cooldown', 'Joueur', 'Cooldowns', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Reset cooldown', 'Joueur', 'Cooldowns', false)
         return
     end
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     
     if not professor or not targetPlayer then
-        TriggerClientEvent('th_power:professorSpellAction', source, 'Reset cooldown', 'Joueur', 'Cooldowns', false)
+        TriggerClientEvent('dvr_power:professorSpellAction', source, 'Reset cooldown', 'Joueur', 'Cooldowns', false)
         return
     end
     
@@ -2084,8 +2084,8 @@ RegisterNetEvent('th_power:professorResetCooldowns', function(targetPlayerId)
         playerCooldowns[playerIdStr] = nil
     end
     
-    TriggerClientEvent('th_power:resetAllCooldowns', targetPlayerId)
-    TriggerClientEvent('th_power:professorSpellAction', source, 'Reset cooldown', targetPlayer.getName(), 'Tous les cooldowns', true)
+    TriggerClientEvent('dvr_power:resetAllCooldowns', targetPlayerId)
+    TriggerClientEvent('dvr_power:professorSpellAction', source, 'Reset cooldown', targetPlayer.getName(), 'Tous les cooldowns', true)
     
     LogDiscord('reset_cooldowns', {
         professor = { source = source, name = professor.getName(), license = professor.getIdentifier() },
@@ -2106,7 +2106,7 @@ local function CollectProfessorSpellInfo(identifier)
     return playerSpells[identifier] or {}
 end
 
-RegisterNetEvent('th_power:professorGetPlayerSpells', function(targetPlayerId)
+RegisterNetEvent('dvr_power:professorGetPlayerSpells', function(targetPlayerId)
     local source <const> = source
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
@@ -2116,10 +2116,10 @@ RegisterNetEvent('th_power:professorGetPlayerSpells', function(targetPlayerId)
     end
     
     local spells <const> = CollectProfessorSpellInfo(targetPlayer.identifier)
-    TriggerClientEvent('th_power:receivePlayerSpells', source, targetPlayerId, spells)
+    TriggerClientEvent('dvr_power:receivePlayerSpells', source, targetPlayerId, spells)
 end)
 
-lib.callback.register('th_power:professorFetchPlayerSpells', function(source, targetPlayerId)
+lib.callback.register('dvr_power:professorFetchPlayerSpells', function(source, targetPlayerId)
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
     if not professor or not targetPlayer then
@@ -2129,7 +2129,7 @@ lib.callback.register('th_power:professorFetchPlayerSpells', function(source, ta
     return CollectProfessorSpellInfo(targetPlayer.identifier)
 end)
 
-lib.callback.register('th_power:professorGetSkillPoints', function(source, targetPlayerId)
+lib.callback.register('dvr_power:professorGetSkillPoints', function(source, targetPlayerId)
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
 
@@ -2142,7 +2142,7 @@ lib.callback.register('th_power:professorGetSkillPoints', function(source, targe
     end)
 
     if not ok then
-        print(('[th_power] Failed to fetch skill points for %s: %s'):format(targetPlayerId, points))
+        print(('[dvr_power] Failed to fetch skill points for %s: %s'):format(targetPlayerId, points))
         return 0
     end
 
@@ -2158,7 +2158,7 @@ local skillDefs <const> = {
     { id = 'maitrise', label = 'Maîtrise' }
 }
 
-lib.callback.register('th_power:professorGetSkillLevels', function(source, targetPlayerId)
+lib.callback.register('dvr_power:professorGetSkillLevels', function(source, targetPlayerId)
     local professor <const> = ESX.GetPlayerFromId(source)
     local targetPlayer <const> = ESX.GetPlayerFromId(targetPlayerId)
 
@@ -2221,7 +2221,7 @@ local function GetNearbyProfessorPlayers(professorSrc, radius)
                         nearby[#nearby + 1] = {
                             id = targetSrc,
                             name = PlayerCache.GetName(targetSrc) or GetPlayerName(targetSrc) or ('Joueur %s'):format(targetSrc),
-                            distance = math_sqrt(distSq)
+                            distance = madvr_sqrt(distSq)
                         }
                     end
                 end
@@ -2238,7 +2238,7 @@ local function GetNearbyProfessorPlayers(professorSrc, radius)
     return nearby
 end
 
-lib.callback.register('th_power:professorGetNearbyPlayers', function(source, radius)
+lib.callback.register('dvr_power:professorGetNearbyPlayers', function(source, radius)
     local professor <const> = ESX.GetPlayerFromId(source)
     if not professor or not professor.job or (professor.job.name ~= 'wand_professeur' and professor.job.name ~= 'professeur' and professor.job.name ~= 'direction') then
         return {}
@@ -2273,15 +2273,15 @@ local function GetProfessorPlayers()
     return players
 end
 
-lib.callback.register('th_power:professorGetPlayers', function(source)
+lib.callback.register('dvr_power:professorGetPlayers', function(source)
     return GetProfessorPlayers()
 end)
 
-lib.callback.register('th_power:professorGetTempSpells', function(source)
+lib.callback.register('dvr_power:professorGetTempSpells', function(source)
     return BuildTempSpellsPayload()
 end)
 
-lib.callback.register('th_power:professorLoadData', function(source)
+lib.callback.register('dvr_power:professorLoadData', function(source)
     local result <const> = MySQL.single.await('SELECT * FROM professor_data WHERE id = 1', {})
     
     if result then
@@ -2307,7 +2307,7 @@ lib.callback.register('th_power:professorLoadData', function(source)
     end
 end)
 
-RegisterNetEvent('th_power:professorSaveData', function(classes, notes, attendance, history)
+RegisterNetEvent('dvr_power:professorSaveData', function(classes, notes, attendance, history)
     local source <const> = source
     local professor <const> = ESX.GetPlayerFromId(source)
     
@@ -2323,7 +2323,7 @@ RegisterNetEvent('th_power:professorSaveData', function(classes, notes, attendan
     })
 end)
 
-RegisterNetEvent('th_power:professorClearHistory', function()
+RegisterNetEvent('dvr_power:professorClearHistory', function()
     local source <const> = source
     local professor <const> = ESX.GetPlayerFromId(source)
     
@@ -2341,7 +2341,7 @@ RegisterNetEvent('th_power:professorClearHistory', function()
 end)
 
 AddEventHandler('esx:playerLogout', function(playerId)
-    TriggerClientEvent('th_power:hideHUD', playerId)
+    TriggerClientEvent('dvr_power:hideHUD', playerId)
 
     local player <const> = ESX.GetPlayerFromId(playerId)
     local identifier <const> = player and player.identifier or nil
@@ -2361,7 +2361,7 @@ AddEventHandler('esx:playerLogout', function(playerId)
 
     for lightId, light in pairs(activeLights) do
         if light.playerId == playerId then
-            TriggerClientEvent('th_power:removeLight', -1, lightId)
+            TriggerClientEvent('dvr_power:removeLight', -1, lightId)
             activeLights[lightId] = nil
         end
     end

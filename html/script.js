@@ -2948,7 +2948,7 @@ function renderAllSpells() {
             <div class="accordion-body stack">
                 ${spells.map(spell => {
                     const iconPath = spell.icon || spell.image || '';
-                    const iconUrl = iconPath ? `nui://th_power/html/${iconPath}` : '';
+                    const iconUrl = iconPath ? `nui://dvr_power/html/${iconPath}` : '';
                     return `
                         <div class="card-row spell-card-row">
                             <div class="card-main">
@@ -3274,7 +3274,7 @@ function openSpellSelectionModalForPlayer(playerId, playerName, isTemporary) {
     const list = availableSpells.map(spell => `
         <button class="list-row spell-search-item" data-spell="${spell.id}" data-spell-name="${(spell.name || spell.id).toLowerCase()}" data-spell-desc="${(spell.description || '').toLowerCase()}">
             <div class="card-main">
-                ${spell.icon || spell.image ? `<img src="nui://th_power/html/${spell.icon || spell.image}" alt="${spell.name || spell.id}" class="spell-icon">` : ''}
+                ${spell.icon || spell.image ? `<img src="nui://dvr_power/html/${spell.icon || spell.image}" alt="${spell.name || spell.id}" class="spell-icon">` : ''}
                 <div>
                     <div class="title">${spell.name || spell.id}</div>
                     <div class="muted">${spell.description || 'Aucune description'}</div>

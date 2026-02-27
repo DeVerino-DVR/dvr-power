@@ -1,7 +1,7 @@
 # TH_POWER - Système de Sorts Magiques
 
 ## Description
-`th_power` est un système de sorts magiques complet pour FiveM avec ESX, incluant un HUD interactif, gestion des cooldowns, système de professeur, et architecture modulaire pour l'enregistrement de sorts externes.
+`dvr_power` est un système de sorts magiques complet pour FiveM avec ESX, incluant un HUD interactif, gestion des cooldowns, système de professeur, et architecture modulaire pour l'enregistrement de sorts externes.
 
 ## Fonctionnalités
 
@@ -34,7 +34,7 @@
 - oxmysql
 
 ### Configuration
-1. Ajoutez `th_power` à votre `server.cfg`
+1. Ajoutez `dvr_power` à votre `server.cfg`
 2. Configurez la base de données (voir section Base de Données)
 3. Ajustez la configuration dans `config/config.lua`
 
@@ -97,7 +97,7 @@ Enregistre un module de sorts externe.
 
 **Exemple :**
 ```lua
-exports['th_power']:registerModule({
+exports['dvr_power']:registerModule({
     name = "Lumos",
     spells = {
         {
@@ -144,10 +144,10 @@ Retourne si un joueur connaît un sort et son niveau actuel.
 **Exemples :**
 ```lua
 -- Dans un événement serveur, utilise automatiquement `source`
-local hasSpell, level = exports['th_power']:GetSpell('mortalis')
+local hasSpell, level = exports['dvr_power']:GetSpell('mortalis')
 
 -- Depuis un autre script serveur
-local hasSpell, level, name = exports['th_power']:GetSpell(targetPlayerId, 'mortalis')
+local hasSpell, level, name = exports['dvr_power']:GetSpell(targetPlayerId, 'mortalis')
 ```
 
 > Note : Le même export existe côté client et retourne l'état du joueur local.
@@ -158,7 +158,7 @@ Retourne le nom affiché d'un sort (ou son ID s'il n'existe pas).
 **Retour :** string
 
 ```lua
-local displayName = exports['th_power']:GetSpellName('mortalis')
+local displayName = exports['dvr_power']:GetSpellName('mortalis')
 ```
 
 ### `getAllModules()`
@@ -388,10 +388,10 @@ end
 ```lua
 -- Créer un système de potions personnalisé
 local function UsePotion()
-    local currentPotion = GetResourceKvpInt('th_power:potion_amount') or 0
+    local currentPotion = GetResourceKvpInt('dvr_power:potion_amount') or 0
     if currentPotion > 0 then
         currentPotion = currentPotion - 1
-        SetResourceKvpInt('th_power:potion_amount', currentPotion)
+        SetResourceKvpInt('dvr_power:potion_amount', currentPotion)
         
         -- Mettre à jour la barre de potion
         SendNUIMessage({
@@ -407,20 +407,20 @@ end
 
 ## API - Callbacks
 
-### `th_power:registerModuleServer`
+### `dvr_power:registerModuleServer`
 Callback pour enregistrer un module depuis le client.
 
 **Utilisation :**
 ```lua
-local success = lib.callback.await('th_power:registerModuleServer', false, moduleData)
+local success = lib.callback.await('dvr_power:registerModuleServer', false, moduleData)
 ```
 
-### `th_power:professorGetPlayers`
+### `dvr_power:professorGetPlayers`
 Récupère la liste des joueurs pour le système professeur.
 
 **Retour :** Table des joueurs avec `id`, `name`, `identifier`
 
-### `th_power:getPlayerSpells`
+### `dvr_power:getPlayerSpells`
 Récupère les sorts d'un joueur.
 
 **Retour :** Table des IDs de sorts
@@ -429,7 +429,7 @@ Récupère les sorts d'un joueur.
 
 ### Événements Serveur
 
-#### `th_power:castSpell`
+#### `dvr_power:castSpell`
 Lance un sort.
 
 **Paramètres :**
@@ -437,14 +437,14 @@ Lance un sort.
 - `targetCoords` (vector3) : Coordonnées de la cible
 - `targetServerId` (number) : ID serveur de la cible
 
-#### `th_power:playSpellSound`
+#### `dvr_power:playSpellSound`
 Joue le son d'un sort.
 
 **Paramètres :**
 - `spellId` (string) : ID du sort
 - `coords` (vector3) : Coordonnées où jouer le son
 
-#### `th_power:requestRemoveLight`
+#### `dvr_power:requestRemoveLight`
 Demande la suppression d'une lumière.
 
 **Paramètres :**
@@ -452,19 +452,19 @@ Demande la suppression d'une lumière.
 
 ### Événements Client
 
-#### `th_power:registerModule`
+#### `dvr_power:registerModule`
 Enregistre un module côté client.
 
 **Paramètres :**
 - `moduleData` (table) : Données du module
 
-#### `th_power:loadSpells`
+#### `dvr_power:loadSpells`
 Charge les sorts d'un joueur.
 
 **Paramètres :**
 - `spells` (table) : Liste des IDs de sorts
 
-#### `th_power:spellCast`
+#### `dvr_power:spellCast`
 Événement de lancement de sort.
 
 **Paramètres :**
@@ -472,13 +472,13 @@ Charge les sorts d'un joueur.
 - `spellId` (string) : ID du sort
 - `targetCoords` (vector3) : Coordonnées de la cible
 
-#### `th_power:spellRemoved`
+#### `dvr_power:spellRemoved`
 Événement de suppression de sort.
 
 **Paramètres :**
 - `spellId` (string) : ID du sort supprimé
 
-#### `th_power:updateHP`
+#### `dvr_power:updateHP`
 Met à jour les HP magiques.
 
 **Paramètres :**
@@ -487,7 +487,7 @@ Met à jour les HP magiques.
 - `deathType` (string) : Type de mort
 - `damageAmount` (number) : Montant des dégâts
 
-#### `th_power:playerDied`
+#### `dvr_power:playerDied`
 Événement de mort du joueur.
 
 ## State Bags
@@ -510,7 +510,7 @@ local magicHp = LocalPlayer.state.magicHp or 100
 
 ## Cache Client (KVP)
 
-### `th_power:spell_key_assignments`
+### `dvr_power:spell_key_assignments`
 Sauvegarde des assignations de sorts aux touches.
 
 **Format :** JSON string
@@ -522,7 +522,7 @@ Sauvegarde des assignations de sorts aux touches.
 }
 ```
 
-### `th_power:active_cooldowns`
+### `dvr_power:active_cooldowns`
 Sauvegarde des cooldowns actifs.
 
 **Format :** JSON string
@@ -533,7 +533,7 @@ Sauvegarde des cooldowns actifs.
 }
 ```
 
-### `th_power:last_active_spell`
+### `dvr_power:last_active_spell`
 Sort actuellement sélectionné.
 
 **Format :** String
@@ -584,7 +584,7 @@ HP_CONFIG = {
 ```lua
 -- Dans votre ressource
 local function RegisterMySpell()
-    exports['th_power']:registerModule({
+    exports['dvr_power']:registerModule({
         name = "Mon Module",
         spells = {
             {
@@ -609,7 +609,7 @@ end
 
 -- Enregistrer au démarrage
 CreateThread(function()
-    Wait(5000) -- Attendre que th_power soit prêt
+    Wait(5000) -- Attendre que dvr_power soit prêt
     RegisterMySpell()
 end)
 ```
@@ -617,7 +617,7 @@ end)
 ### Sort avec Touche Directe
 ```lua
 -- Sort qui ne s'affiche pas dans le HUD mais a une touche directe
-exports['th_power']:registerModule({
+exports['dvr_power']:registerModule({
     name = "Sort Secret",
     spells = {
         {

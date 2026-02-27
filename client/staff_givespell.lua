@@ -1,16 +1,16 @@
 ---@diagnostic disable: undefined-global, trailing-space, unused-local, param-type-mismatch
-local math_floor = math.floor
+local madvr_floor = math.floor
 local table_sort = table.sort
 local tonumber = tonumber
 
-local MENU_ID_PLAYERS <const> = 'th_power:staff_givespell_players'
-local MENU_ID_SPELLS <const> = 'th_power:staff_givespell_spells'
+local MENU_ID_PLAYERS <const> = 'dvr_power:staff_givespell_players'
+local MENU_ID_SPELLS <const> = 'dvr_power:staff_givespell_spells'
 local REMOVE_LABEL <const> = 'retirer'
 local LEVEL_VALUES <const> = { '1', '2', '3', '4', '5', REMOVE_LABEL }
-local NUI_BASE <const> = 'nui://th_power/html/'
+local NUI_BASE <const> = 'nui://dvr_power/html/'
 
 local function FetchSpells()
-    local spells = lib.callback.await('th_power:staffGetSpells', false) or {}
+    local spells = lib.callback.await('dvr_power:staffGetSpells', false) or {}
     table_sort(spells, function(a, b)
         local an = (a.name or a.id or ''):lower()
         local bn = (b.name or b.id or ''):lower()
@@ -23,7 +23,7 @@ local function FetchSpells()
 end
 
 local function FetchPlayers()
-    local players = lib.callback.await('th_power:professorGetPlayers', false) or {}
+    local players = lib.callback.await('dvr_power:professorGetPlayers', false) or {}
     table_sort(players, function(a, b)
         return (a.name or '') < (b.name or '')
     end)
@@ -36,7 +36,7 @@ local function ResolveLevelSelection(scrollIndex)
         return nil, true
     end
 
-    local numeric = math_floor(tonumber(value) or 1)
+    local numeric = madvr_floor(tonumber(value) or 1)
     if numeric < 1 then numeric = 1 end
     if numeric > 5 then numeric = 5 end
     return numeric, false
@@ -79,7 +79,7 @@ local function ShowSpellMenu(targetPlayerId, targetPlayerName)
             return
         end
         local level, removeSpell = ResolveLevelSelection(scrollIndex)
-        TriggerServerEvent('th_power:staffGiveSpell', args.spellId, level or 0, removeSpell, args.targetPlayerId)
+        TriggerServerEvent('dvr_power:staffGiveSpell', args.spellId, level or 0, removeSpell, args.targetPlayerId)
     end)
 
     lib.showMenu(MENU_ID_SPELLS)
@@ -145,11 +145,11 @@ local function OpenStaffGiveSpell()
     ShowPlayerMenu()
 end
 
-RegisterNetEvent('th_power:openStaffSpellMenu', function()
+RegisterNetEvent('dvr_power:openStaffSpellMenu', function()
     OpenStaffGiveSpell()
 end)
 
-RegisterNetEvent('th_power:staffSpellResult', function(success, message)
+RegisterNetEvent('dvr_power:staffSpellResult', function(success, message)
     if not message then
         return
     end

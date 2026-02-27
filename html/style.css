@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Cinzel Decorative';
-    src: url('nui://th_power/html/fonts/CinzelDecorative-Regular.ttf') format('truetype');
+    src: url('nui://dvr_power/html/fonts/CinzelDecorative-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: 'Cinzel Decorative';
-    src: url('nui://th_power/html/fonts/CinzelDecorative-Bold.ttf') format('truetype');
+    src: url('nui://dvr_power/html/fonts/CinzelDecorative-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
     font-family: 'Cinzel Decorative';
-    src: url('nui://th_power/html/fonts/CinzelDecorative-Black.ttf') format('truetype');
+    src: url('nui://dvr_power/html/fonts/CinzelDecorative-Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
     font-display: swap;

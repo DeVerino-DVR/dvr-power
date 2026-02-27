@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-global, trailing-space
-lib.callback.register('th_power:getPlayerSpells', function(source)
+lib.callback.register('dvr_power:getPlayerSpells', function(source)
     local player <const> = ESX.GetPlayerFromId(source)
     if not player then return {} end
     
@@ -17,12 +17,12 @@ lib.callback.register('th_power:getPlayerSpells', function(source)
     return unlockedSpells
 end)
 
-RegisterNetEvent('th_power:castSpell', function(spellId)
+RegisterNetEvent('dvr_power:castSpell', function(spellId)
     if not spellId then return end
     local sourceId <const> = source
     local cooldown = GetSpellCooldown(spellId)
 
-    TriggerClientEvent('th_power:onSpellCast', sourceId, {
+    TriggerClientEvent('dvr_power:onSpellCast', sourceId, {
         id = spellId,
         cooldown = cooldown
     })

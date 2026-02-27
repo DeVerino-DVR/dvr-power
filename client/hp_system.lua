@@ -80,7 +80,7 @@ local function CheckRegeneration()
     end
 end
 
-RegisterNetEvent('th_power:updateHP', function(hp, max)
+RegisterNetEvent('dvr_power:updateHP', function(hp, max)
     local oldHP = currentHP
     currentHP = hp
     maxHP = max
@@ -140,7 +140,7 @@ RegisterNetEvent('th_power:updateHP', function(hp, max)
     end
 end)
 
-RegisterNetEvent('th_power:respawn', function(hp, max)
+RegisterNetEvent('dvr_power:respawn', function(hp, max)
     local ped = PlayerPedId()
 
     if ped ~= 0 and (IsEntityDead(ped) or IsPedFatallyInjured(ped)) or ESX.PlayerData.dead then

@@ -6,7 +6,7 @@ local GetEntityMaxHealth = GetEntityMaxHealth
 local SetEntityHealth = SetEntityHealth
 local SendNUIMessage = SendNUIMessage
 local GetResourceState = GetResourceState
-local math_floor = math.floor
+local madvr_floor = math.floor
 local LOCK_THRESHOLD = 0.5
 local UNLOCK_THRESHOLD = 2.0
 
@@ -54,7 +54,7 @@ local function clampPercent(value)
         clamped = 0.5
     end
 
-    return math_floor(clamped + 0.5)
+    return madvr_floor(clamped + 0.5)
 end
 
 local function calculatePercent(value, default)
@@ -62,7 +62,7 @@ local function calculatePercent(value, default)
         return 0
     end
 
-    return math_floor((value / default) * 100)
+    return madvr_floor((value / default) * 100)
 end
 
 local function getStatusPercent(entry)
@@ -125,14 +125,14 @@ end)
 
 RegisterNUICallback('assignSpell', function(data, cb)
     if data and data.spellId and data.keyIndex then
-        TriggerEvent('th_power:assignSpellToKey', data.spellId, data.keyIndex)
+        TriggerEvent('dvr_power:assignSpellToKey', data.spellId, data.keyIndex)
     end
     cb('ok')
 end)
 
 RegisterNUICallback('unassignSpell', function(data, cb)
     if data and (data.position or data.spellId) then
-        TriggerEvent('th_power:removeSpellFromHUD', data.spellId, data.position)
+        TriggerEvent('dvr_power:removeSpellFromHUD', data.spellId, data.position)
     end
     cb('ok')
 end)
@@ -143,13 +143,13 @@ RegisterNUICallback('closeSpellSelector', function(data, cb)
 end)
 
 RegisterNUICallback('getSpellSets', function(data, cb)
-    local sets = exports['th_power']:getSpellSets()
+    local sets = exports['dvr_power']:getSpellSets()
     cb(json.encode(sets or {}))
 end)
 
 RegisterNUICallback('switchSpellSet', function(data, cb)
     if data and data.setId then
-        local success = exports['th_power']:switchSpellSet(tonumber(data.setId))
+        local success = exports['dvr_power']:switchSpellSet(tonumber(data.setId))
         cb(success and 'ok' or 'error')
     else
         cb('error')
@@ -158,7 +158,7 @@ end)
 
 RegisterNUICallback('renameSpellSet', function(data, cb)
     if data and data.setId and data.name then
-        local success = exports['th_power']:renameSpellSet(tonumber(data.setId), data.name)
+        local success = exports['dvr_power']:renameSpellSet(tonumber(data.setId), data.name)
         cb(success and 'ok' or 'error')
     else
         cb('error')
@@ -261,10 +261,10 @@ function HUD.UpdateStats(health, hunger, thirst, magicHp, potion, healthCurrent,
         HUD.stats.health = clampPercent(health) or HUD.stats.health
     end
     if healthCurrent ~= nil then
-        HUD.stats.healthCurrent = math_floor(tonumber(healthCurrent) or HUD.stats.healthCurrent or 0)
+        HUD.stats.healthCurrent = madvr_floor(tonumber(healthCurrent) or HUD.stats.healthCurrent or 0)
     end
     if healthMax ~= nil then
-        HUD.stats.healthMax = math_floor(tonumber(healthMax) or HUD.stats.healthMax or 0)
+        HUD.stats.healthMax = madvr_floor(tonumber(healthMax) or HUD.stats.healthMax or 0)
     end
     if hunger ~= nil then
         HUD.stats.hunger = clampPercent(hunger) or HUD.stats.hunger
@@ -336,8 +336,8 @@ function HUD.SetSpells(spells)
             local level = tonumber(spell.level)
             local maxLevel = tonumber(spell.maxLevel or spell.max_level)
             if level and maxLevel and maxLevel > 0 then
-                level = math_floor(level + 0.0001)
-                maxLevel = math_floor(maxLevel + 0.0001)
+                level = madvr_floor(level + 0.0001)
+                maxLevel = madvr_floor(maxLevel + 0.0001)
                 payload.level = level
                 payload.maxLevel = maxLevel
                 payload.levelRatio = math.min(1.0, math.max(0.0, level / maxLevel))
@@ -480,7 +480,7 @@ function HUD.ClearSpells()
 end
 
 function HUD.GetPlayerSpellsFromMain()
-    return playerSpells or exports.th_power:getPlayerSpells() or {}
+    return playerSpells or exports.dvr_power:getPlayerSpells() or {}
 end
 
 function HUD.GetUnlockedSpells()
@@ -488,7 +488,7 @@ function HUD.GetUnlockedSpells()
 end
 
 function HUD.GetSelectedSpellFromMain()
-    return selectedSpellId or exports.th_power:getSelectedSpell()
+    return selectedSpellId or exports.dvr_power:getSelectedSpell()
 end
 
 function HUD.GetConfigSpells()
@@ -663,7 +663,7 @@ CreateThread(function()
                 local maxHealth <const> = GetEntityMaxHealth(ped)
                 local healthPercent = 0
                 if maxHealth and maxHealth > 0 then
-                    healthPercent = math_floor((health / maxHealth) * 100)
+                    healthPercent = madvr_floor((health / maxHealth) * 100)
                 end
 
                 local magicHp = LocalPlayer.state.magicHp or 100
@@ -695,7 +695,7 @@ RegisterCommand('hud', function()
     HUD.ToggleHUD(HUD.visible)
 end, false)
 
-RegisterNetEvent('th_power:onSpellCast', function(spellData)
+RegisterNetEvent('dvr_power:onSpellCast', function(spellData)
     if spellData.id then
         for position, spell in pairs(HUD.currentSpells) do
             if spell.id == spellData.id then
@@ -719,19 +719,19 @@ RegisterNetEvent('th_power:onSpellCast', function(spellData)
 end)
 
 
-RegisterNetEvent('th_power:unlockSpell', function(spellId)
+RegisterNetEvent('dvr_power:unlockSpell', function(spellId)
     if not hudReady then
         return
     end
 end)
 
-RegisterNetEvent('th_power:registerModule', function(moduleData)
+RegisterNetEvent('dvr_power:registerModule', function(moduleData)
     if not hudReady then
         return
     end
 end)
 
-RegisterNetEvent('th_power:healPlayer', function()
+RegisterNetEvent('dvr_power:healPlayer', function()
     local ped <const> = cache.ped
     if DoesEntityExist(ped) then
         SetEntityHealth(ped, GetEntityMaxHealth(ped))

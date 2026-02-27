@@ -27,7 +27,7 @@ Les explosions natives de GTA V (`AddExplosion`) **ignorent** le paramètre de d
 ### Fonction principale : `ApplySpellDamage`
 
 ```lua
-exports['th_power']:ApplySpellDamage(
+exports['dvr_power']:ApplySpellDamage(
     coords,             -- vector3: Centre de la zone
     spellLevel,         -- number: Niveau du sort (1-5)
     damagePerLevel,     -- number: Dégâts par niveau (50 = niveau 1 fait 50, niveau 2 fait 100)
@@ -87,7 +87,7 @@ RegisterNetEvent('mon_sort:applyDamage', function(coords, spellLevel)
     local _source = source
     
     -- Exemple basique (ragdoll automatique)
-    exports['th_power']:ApplySpellDamage(
+    exports['dvr_power']:ApplySpellDamage(
         coords,
         spellLevel,
         Config.Damage.perLevel,  -- 50 dégâts par niveau
@@ -97,7 +97,7 @@ RegisterNetEvent('mon_sort:applyDamage', function(coords, spellLevel)
     )
     
     -- Exemple avec options personnalisées
-    exports['th_power']:ApplySpellDamage(
+    exports['dvr_power']:ApplySpellDamage(
         coords,
         spellLevel,
         Config.Damage.perLevel,
@@ -112,7 +112,7 @@ RegisterNetEvent('mon_sort:applyDamage', function(coords, spellLevel)
     )
     
     -- Exemple sans ragdoll (sort subtil)
-    exports['th_power']:ApplySpellDamage(
+    exports['dvr_power']:ApplySpellDamage(
         coords,
         spellLevel,
         Config.Damage.perLevel,
@@ -167,7 +167,7 @@ Avec `perLevel = 50` :
 Pour les sorts qui n'utilisent pas d'explosions natives :
 
 ```lua
-exports['th_power']:ApplyAreaDamage(
+exports['dvr_power']:ApplyAreaDamage(
     coords,      -- vector3
     damage,      -- number: Dégâts fixes
     radius,      -- number
@@ -179,14 +179,14 @@ exports['th_power']:ApplyAreaDamage(
 ### `GetPlayersInRadius`
 
 ```lua
-local players = exports['th_power']:GetPlayersInRadius(coords, radius, excludeSourceId)
+local players = exports['dvr_power']:GetPlayersInRadius(coords, radius, excludeSourceId)
 -- Retourne: { {playerId, ped, distance}, ... }
 ```
 
 ### `HasProtheaShield`
 
 ```lua
-local hasShield = exports['th_power']:HasProtheaShield(playerId)
+local hasShield = exports['dvr_power']:HasProtheaShield(playerId)
 -- Retourne: boolean
 ```
 
@@ -208,7 +208,7 @@ local hasShield = exports['th_power']:HasProtheaShield(playerId)
 │  1. Trouve tous les joueurs dans le rayon                   │
 │  2. Vérifie le bouclier Prothea                             │
 │  3. Calcule la force du ragdoll selon la distance           │
-│  4. Envoie 'th_power:protectFromExplosion' aux joueurs      │
+│  4. Envoie 'dvr_power:protectFromExplosion' aux joueurs      │
 │     (avec coords explosion + options ragdoll)               │
 └──────────────────────────┬──────────────────────────────────┘
                            │
@@ -229,8 +229,8 @@ local hasShield = exports['th_power']:HasProtheaShield(playerId)
 
 ## 📋 Sorts utilisant ce système
 
-- ✅ `th_ignifera` - Sort d'explosion de feu
-- ✅ `th_thunder` - Sort de foudre
+- ✅ `dvr_ignifera` - Sort d'explosion de feu
+- ✅ `dvr_thunder` - Sort de foudre
 
 ---
 
@@ -268,19 +268,19 @@ Le système affiche automatiquement des logs détaillés dans la console serveur
 #### Côté Serveur
 
 ```
-[th_power:DamageSystem] [Ignifera] Joueur123 lance un sort niveau 3 (dégâts: 150, rayon: 5.0m)
-[th_power:DamageSystem] [Ignifera] 2 joueur(s) détecté(s) dans le rayon
-[th_power:DamageSystem] [Ignifera] Joueur456 (ID: 2) - Entre en combat, 150 dégâts seront appliqués (distance: 3.21m, HP actuel: 5200)
-[th_power:DamageSystem] [Ignifera] Joueur789 (ID: 3) - Bouclier Prothea actif, dégâts bloqués (distance: 4.50m)
+[dvr_power:DamageSystem] [Ignifera] Joueur123 lance un sort niveau 3 (dégâts: 150, rayon: 5.0m)
+[dvr_power:DamageSystem] [Ignifera] 2 joueur(s) détecté(s) dans le rayon
+[dvr_power:DamageSystem] [Ignifera] Joueur456 (ID: 2) - Entre en combat, 150 dégâts seront appliqués (distance: 3.21m, HP actuel: 5200)
+[dvr_power:DamageSystem] [Ignifera] Joueur789 (ID: 3) - Bouclier Prothea actif, dégâts bloqués (distance: 4.50m)
 ```
 
 #### Côté Client (joueur touché)
 
 ```
-[th_power:SpellDamage] Protection activée - Protection contre l'explosion pendant 500ms
-[th_power:SpellDamage] HP actuel: 5200 / 5200 - Dégâts à appliquer: 150
-[th_power:SpellDamage] Dégâts appliqués - HP: 5200 -> 5050 (-150 dégâts)
-[th_power:SpellDamage] HP restant: 5050 / 5200 (97%)
+[dvr_power:SpellDamage] Protection activée - Protection contre l'explosion pendant 500ms
+[dvr_power:SpellDamage] HP actuel: 5200 / 5200 - Dégâts à appliquer: 150
+[dvr_power:SpellDamage] Dégâts appliqués - HP: 5200 -> 5050 (-150 dégâts)
+[dvr_power:SpellDamage] HP restant: 5050 / 5200 (97%)
 ```
 
 ### Codes couleur des logs
@@ -294,7 +294,7 @@ Le système affiche automatiquement des logs détaillés dans la console serveur
 
 ### Logs de debug avancés
 
-Pour activer des logs encore plus détaillés, modifier `th_power/config/config.lua` :
+Pour activer des logs encore plus détaillés, modifier `dvr_power/config/config.lua` :
 
 ```lua
 Config.Debug = true

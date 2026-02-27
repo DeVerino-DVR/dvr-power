@@ -96,7 +96,7 @@ end
 
 -- Event to protect local player from explosion damage temporarily
 -- Also handles forced ragdoll for immersion
-RegisterNetEvent('th_power:protectFromExplosion', function(duration, damage, spellLevel, spellName, ragdollOptions)
+RegisterNetEvent('dvr_power:protectFromExplosion', function(duration, damage, spellLevel, spellName, ragdollOptions)
     local durationMs = duration or 800
     local myPed = cache.ped
     local currentTime = GetGameTimer()
