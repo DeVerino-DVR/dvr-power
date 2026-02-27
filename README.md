@@ -127,6 +127,18 @@ dvr_power/
 - `registerModule(moduleData)` - Register spell module client-side
 - `ToggleHUD(visible)` - Show/hide HUD
 
+## Try it Live
+
+This spell system is actively used on **Fantastic RP**, a whitelisted FiveM server. If you want to see it in action before setting it up yourself, you're welcome to join and test it!
+
+**Join the Discord:** [discord.gg/fantasticwl](https://discord.gg/fantasticwl)
+
+## Contributing
+
+You are welcome to **fork** this repository to fix bugs, improve spells, or adapt the system to your server. If you find and fix an issue, feel free to submit a **Pull Request** — contributions are appreciated!
+
+If you like this project, please consider giving it a **Star** on GitHub — it helps others discover the project and motivates future updates.
+
 ## License
 
 Free to use. Credits to DVR, [@Dxqson](https://github.com/Dxqson), [@Dolyyyy](https://github.com/Dolyyyy), and [@lu-value](https://github.com/lu-value) are **mandatory**.

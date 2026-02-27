@@ -43,7 +43,7 @@ const DEFAULT_KEYS = {
     bottom: '8'
 };
 const MAX_SPELL_LEVEL = 5;
-const DEFAULT_PREVIEW_IMAGE = 'https://files.fantasticrp.fr/d.php?f=5d9b919272572d17d8d3aa66.png';
+const DEFAULT_PREVIEW_IMAGE = 'YOUR_PREVIEW_IMAGE_URL_HERE';
 
 let dynamicKeys = { ...DEFAULT_KEYS };
 const lockFeedbackTimers = new Map();
