@@ -6,7 +6,7 @@ local GetEntityMaxHealth = GetEntityMaxHealth
 local SetEntityHealth = SetEntityHealth
 local SendNUIMessage = SendNUIMessage
 local GetResourceState = GetResourceState
-local madvr_floor = math.floor
+local math_floor = math.floor
 local LOCK_THRESHOLD = 0.5
 local UNLOCK_THRESHOLD = 2.0
 
@@ -54,7 +54,7 @@ local function clampPercent(value)
         clamped = 0.5
     end
 
-    return madvr_floor(clamped + 0.5)
+    return math_floor(clamped + 0.5)
 end
 
 local function calculatePercent(value, default)
@@ -62,7 +62,7 @@ local function calculatePercent(value, default)
         return 0
     end
 
-    return madvr_floor((value / default) * 100)
+    return math_floor((value / default) * 100)
 end
 
 local function getStatusPercent(entry)
@@ -261,10 +261,10 @@ function HUD.UpdateStats(health, hunger, thirst, magicHp, potion, healthCurrent,
         HUD.stats.health = clampPercent(health) or HUD.stats.health
     end
     if healthCurrent ~= nil then
-        HUD.stats.healthCurrent = madvr_floor(tonumber(healthCurrent) or HUD.stats.healthCurrent or 0)
+        HUD.stats.healthCurrent = math_floor(tonumber(healthCurrent) or HUD.stats.healthCurrent or 0)
     end
     if healthMax ~= nil then
-        HUD.stats.healthMax = madvr_floor(tonumber(healthMax) or HUD.stats.healthMax or 0)
+        HUD.stats.healthMax = math_floor(tonumber(healthMax) or HUD.stats.healthMax or 0)
     end
     if hunger ~= nil then
         HUD.stats.hunger = clampPercent(hunger) or HUD.stats.hunger
@@ -336,8 +336,8 @@ function HUD.SetSpells(spells)
             local level = tonumber(spell.level)
             local maxLevel = tonumber(spell.maxLevel or spell.max_level)
             if level and maxLevel and maxLevel > 0 then
-                level = madvr_floor(level + 0.0001)
-                maxLevel = madvr_floor(maxLevel + 0.0001)
+                level = math_floor(level + 0.0001)
+                maxLevel = math_floor(maxLevel + 0.0001)
                 payload.level = level
                 payload.maxLevel = maxLevel
                 payload.levelRatio = math.min(1.0, math.max(0.0, level / maxLevel))
@@ -663,7 +663,7 @@ CreateThread(function()
                 local maxHealth <const> = GetEntityMaxHealth(ped)
                 local healthPercent = 0
                 if maxHealth and maxHealth > 0 then
-                    healthPercent = madvr_floor((health / maxHealth) * 100)
+                    healthPercent = math_floor((health / maxHealth) * 100)
                 end
 
                 local magicHp = LocalPlayer.state.magicHp or 100

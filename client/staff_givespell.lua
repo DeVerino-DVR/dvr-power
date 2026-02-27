@@ -1,5 +1,5 @@
 ---@diagnostic disable: undefined-global, trailing-space, unused-local, param-type-mismatch
-local madvr_floor = math.floor
+local math_floor = math.floor
 local table_sort = table.sort
 local tonumber = tonumber
 
@@ -36,7 +36,7 @@ local function ResolveLevelSelection(scrollIndex)
         return nil, true
     end
 
-    local numeric = madvr_floor(tonumber(value) or 1)
+    local numeric = math_floor(tonumber(value) or 1)
     if numeric < 1 then numeric = 1 end
     if numeric > 5 then numeric = 5 end
     return numeric, false

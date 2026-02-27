@@ -299,7 +299,7 @@ local function sendLog(actionType, data)
 end
 
 local function LogDeath(data)
-    if not Config or not Config.Logs or not Config.Logs.deadvr_webhook or Config.Logs.deadvr_webhook == '' then
+    if not Config or not Config.Logs or not Config.Logs.death_webhook or Config.Logs.death_webhook == '' then
         return
     end
 
@@ -375,7 +375,7 @@ local function LogDeath(data)
 
     enqueueLog({
         embed = embed,
-        webhook = Config.Logs.deadvr_webhook
+        webhook = Config.Logs.death_webhook
     })
 end
 

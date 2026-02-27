@@ -43,8 +43,8 @@ local SetPedToRagdoll = SetPedToRagdoll
 local IsPedFatallyInjured = IsPedFatallyInjured
 local IsPedRagdoll = IsPedRagdoll
 local string_lower = string.lower
-local madvr_min = math.min
-local madvr_max = math.max
+local math_min = math.min
+local math_max = math.max
 
 local soundCooldownActive = false
 local isCasting = false
@@ -1647,10 +1647,10 @@ local function NormalizeTrailComponent(value)
     end
 
     if value > 1.0 then
-        return madvr_min(1.0, value / 255.0)
+        return math_min(1.0, value / 255.0)
     end
 
-    return madvr_max(value, 0.0)
+    return math_max(value, 0.0)
 end
 
 local function ResolveTrailColor(jobName)

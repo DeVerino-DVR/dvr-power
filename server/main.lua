@@ -34,7 +34,7 @@ local STAFF_GROUPS <const> = {
     staff = true,
     owner = true
 }
-local madvr_sqrt <const> = math.sqrt
+local math_sqrt <const> = math.sqrt
 
 local function canManageSpells(src)
     local xPlayer <const> = ESX.GetPlayerFromId(src)
@@ -2221,7 +2221,7 @@ local function GetNearbyProfessorPlayers(professorSrc, radius)
                         nearby[#nearby + 1] = {
                             id = targetSrc,
                             name = PlayerCache.GetName(targetSrc) or GetPlayerName(targetSrc) or ('Joueur %s'):format(targetSrc),
-                            distance = madvr_sqrt(distSq)
+                            distance = math_sqrt(distSq)
                         }
                     end
                 end
