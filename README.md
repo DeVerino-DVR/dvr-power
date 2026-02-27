@@ -81,11 +81,11 @@ All sound and video URLs have been replaced with `YOUR_SOUND_URL_HERE` / `YOUR_V
    - Set your Discord webhook URLs
    - Set your server name
 5. Add `dvr_power` to your server resources and ensure it starts before any spell modules
-6. Install spell modules from [th-power-spells](https://github.com/DeVerino-DVR/dvr-power-spells)
+6. Install spell modules from [dvr-power-spells](https://github.com/DeVerino-DVR/dvr-power-spells)
 
 ## Spell Modules
 
-Spell modules are separate resources that register with dvr_power. See the [th-power-spells](https://github.com/DeVerino-DVR/dvr-power-spells) repository for all available spells.
+Spell modules are separate resources that register with dvr_power. See the [dvr-power-spells](https://github.com/DeVerino-DVR/dvr-power-spells) repository for all available spells.
 
 ## Structure
 
