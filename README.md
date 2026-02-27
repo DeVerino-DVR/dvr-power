@@ -15,10 +15,10 @@ If you use it, you must know what you are doing.
 ## Credits
 
 This script is distributed for free. Credits must remain attributed to:
-- **DVR** (lead developer, 90% of the codebase)
-- **@dxqson**
-- **@dolyyy**
-- **@lu_value**
+- **[DVR](https://github.com/DeVerino-DVR)** (lead developer, 90% of the codebase)
+- **[Dxqson](https://github.com/Dxqson)**
+- **[Dolyyyy](https://github.com/Dolyyyy)**
+- **[lu-value](https://github.com/lu-value)**
 
 Please respect the work that went into this project.
 
@@ -129,4 +129,4 @@ dvr_power/
 
 ## License
 
-Free to use. Credits to DVR, @dxqson, @dolyyy, and @lu_value are **mandatory**.
+Free to use. Credits to DVR, [@Dxqson](https://github.com/Dxqson), [@Dolyyyy](https://github.com/Dolyyyy), and [@lu-value](https://github.com/lu-value) are **mandatory**.
