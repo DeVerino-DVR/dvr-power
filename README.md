@@ -4,6 +4,12 @@ A complete magic spell system for FiveM, including HUD, spell management, leveli
 
 > Originally developed for the VLight RP event.
 
+## Join Fantastic RP
+
+The developer behind this project also runs **Fantastic RP**, a whitelisted FiveM roleplay server with regular fantastic events. If you're looking for a RP community to join, come check it out!
+
+**Join the Discord:** [discord.gg/fantasticwl](https://discord.gg/fantasticwl)
+
 ## Important Notice
 
 This script is **complex**. It was specifically designed for a custom FiveM server environment. If you are not experienced with FiveM development or adapting advanced systems, it will be very difficult to install or modify correctly.
@@ -126,12 +132,6 @@ dvr_power/
 - `getSelectedSpell()` - Get currently selected spell
 - `registerModule(moduleData)` - Register spell module client-side
 - `ToggleHUD(visible)` - Show/hide HUD
-
-## Try it Live
-
-This spell system is actively used on **Fantastic RP**, a whitelisted FiveM server. If you want to see it in action before setting it up yourself, you're welcome to join and test it!
-
-**Join the Discord:** [discord.gg/fantasticwl](https://discord.gg/fantasticwl)
 
 ## Contributing
 
