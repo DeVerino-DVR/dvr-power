@@ -21,3 +21,6 @@ config/local_*.lua
 test_*.lua
 debug_*.lua
 
+
+# AI tools
+.claude/
