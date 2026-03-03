@@ -10,6 +10,8 @@ The developer behind this project also runs **Fantastic RP**, a whitelisted Five
 
 **Join the Discord:** [discord.gg/fantasticwl](https://discord.gg/fantasticwl)
 
+**Join the Developer's Discord:** [discord.gg/PKMqqwGn](https://discord.gg/PKMqqwGn)
+
 ## Important Notice
 
 This script is **complex**. It was specifically designed for a custom FiveM server environment. If you are not experienced with FiveM development or adapting advanced systems, it will be very difficult to install or modify correctly.
