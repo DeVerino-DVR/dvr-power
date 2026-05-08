@@ -4,11 +4,11 @@ A complete magic spell system for FiveM, including HUD, spell management, leveli
 
 > Originally developed for the VLight RP event.
 
-## Join Fantastic RP
+## Join Orion RP
 
-The developer behind this project also runs **Fantastic RP**, a whitelisted FiveM roleplay server with regular fantastic events. If you're looking for a RP community to join, come check it out!
+The developer behind this project also runs **Orion RP**, a whitelisted FiveM roleplay server with regular Orion events. If you're looking for a RP community to join, come check it out!
 
-**Join the Discord:** [discord.gg/fantasticwl](https://discord.gg/fantasticwl)
+**Join the Discord:** [discord.gg/Orionwl](https://discord.gg/jtBDUdwpqN)
 
 **Join the Developer's Discord:** [discord.gg/PKMqqwGn](https://discord.gg/PKMqqwGn)
 
